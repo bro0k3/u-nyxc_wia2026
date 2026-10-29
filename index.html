@@ -6,28 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FireWatch</title>
 
-  <!-- google font: Cormorant Garamond & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
-  <!-- tailwind css -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // warna
+    // Konfigurasi Skema Warna Sesuai Permintaan
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             abu: '#EDEFEA',       // Latar utama halaman
-            kertas: '#FAFAF7',    // Latar panel
-            hutan: '#0B3D2E',     // Hijau tua
-            bara: '#381208',      // Cokelat arang
-            arang: '#232622',     // teks utama
-            gambut: '#625A4F',    // muted
-            garis: '#CDD2C8',     // garis pemisah
+            kertas: '#FAFAF7',    // Latar panel/kartu
+            hutan: '#0B3D2E',     // Hijau tua aksen
+            bara: '#381208',      // Cokelat bara arang pekat
+            arang: '#232622',     // Teks utama / Gelap
+            gambut: '#625A4F',    // Teks pendukung / Muted
+            garis: '#CDD2C8',     // Garis pemisah / Fine borders
           },
           fontFamily: {
             serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
@@ -111,13 +110,14 @@
       </nav>
 
       <!-- Logo (Center) -->
-      <a href="#" class="flex flex-col items-center group">
-        <span
-          class="font-serif text-2xl sm:text-3xl font-normal tracking-[0.25em] text-hutan group-hover:text-bara transition-colors uppercase">
-          FIRE WATCH
-        </span>
-        <span class="text-[8px] uppercase tracking-widest text-gambut -mt-1 font-bold">
-          Transparansi Karhutla
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group" aria-label="FireWatch - ke atas halaman">
+        <img src="pic/logoFW.PNG" alt="Logo FireWatch" width="187" height="240"
+          class="h-9 sm:h-12 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105">
+        <span class="flex flex-col items-center">
+          <span
+            class="font-serif text-xl sm:text-3xl font-normal tracking-[0.2em] sm:tracking-[0.25em] text-hutan group-hover:text-bara transition-colors uppercase">
+            FIRE WATCH
+          </span>
         </span>
       </a>
 
@@ -168,7 +168,7 @@
 
         <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.15] text-white tracking-tight">
           Setiap rupiah penanganan kebakaran hutan <br class="hidden sm:inline">
-          <span class="italic font-normal text-red-200">bisa kamu periksa.</span>
+          <span class="italic font-normal text-red-900">bisa kamu periksa.</span>
         </h1>
 
         <p class="text-garis text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-light">
@@ -364,10 +364,10 @@
           class="flex flex-col md:flex-row md:items-end justify-between gap-6 text-center md:text-left border-b border-white/20 pb-6">
           <div class="space-y-3 max-w-2xl mx-auto md:mx-0">
             <h2 class="font-serif text-4xl sm:text-6xl font-light leading-tight text-white tracking-tight">
-              Dokumentasi Lapangan <span class="italic font-normal text-red-200">& Ekologis</span>
+              Dokumentasi Lapangan <span class="italic font-normal text-green-200">& Ekologis</span>
             </h2>
             <p class="text-garis text-sm sm:text-base leading-relaxed font-light">
-              Bukti kerja di lokasi, supaya angka di buku kas bisa dicocokkan dengan kenyataan.
+              Bukti atas kesulitan dan perjuangan kita semua.
             </p>
           </div>
 
@@ -394,22 +394,22 @@
             <!-- foto 1 -->
             <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
               <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
-                <img src="foto/titik-pantau-12sep.jpg" alt="Titik pantau 12 Sep"
+                <img src="pic/posko.png" alt="Posko"
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <div
                   class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
                   <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
-                  <span class="text-sm font-semibold">Foto Titik Pantau</span>
-                  <span class="text-xs text-garis mt-1 font-mono">[ foto/titik-pantau-12sep.jpg ]</span>
+                  <span class="text-sm font-semibold">Foto Posko</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto posko ]</span>
                 </div>
                 <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
                 </div>
                 <div class="absolute bottom-5 left-5 right-5 text-white">
                   <span
                     class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
-                    FOTO • 12 SEP</span>
-                  <h4 class="font-serif text-xl font-normal">Titik Pantau Patroli Desa</h4>
+                    FOTO</span>
+                  <h4 class="font-serif text-xl font-normal">Posko Lapangan Tanggap Darurat</h4>
                 </div>
               </div>
             </div>
@@ -417,22 +417,22 @@
             <!-- foto2 -->
             <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
               <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
-                <img src="foto/posko-logistik-22sep.jpg" alt="Posko logistik 22 Sep"
+                <img src="pic/upaya.png" alt="Upaya pemadaman"
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <div
                   class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
                   <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
-                  <span class="text-sm font-semibold">Foto Posko Logistik</span>
-                  <span class="text-xs text-garis mt-1 font-mono">[ foto/posko-logistik-22sep.jpg ]</span>
+                  <span class="text-sm font-semibold">Foto Upaya Pemadaman</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto upaya pemadaman ]</span>
                 </div>
                 <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
                 </div>
                 <div class="absolute bottom-5 left-5 right-5 text-white">
                   <span
                     class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
-                    FOTO • 22 SEP</span>
-                  <h4 class="font-serif text-xl font-normal">Posko Logistik & Peralatan</h4>
+                    FOTO</span>
+                  <h4 class="font-serif text-xl font-normal">Upaya Pemadaman Kebakaran Hutan</h4>
                 </div>
               </div>
             </div>
@@ -440,22 +440,22 @@
             <!-- foto3 -->
             <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
               <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
-                <img src="foto/lahan-padam-5okt.jpg" alt="Lahan setelah padam 5 Okt"
+                <img src="pic/jepang.png" alt="Lahan setelah padam 5 Okt"
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                 <div
                   class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
                   <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
-                  <span class="text-sm font-semibold">Foto Lahan Padam</span>
-                  <span class="text-xs text-garis mt-1 font-mono">[ foto/lahan-padam-5okt.jpg ]</span>
+                  <span class="text-sm font-semibold">Foto Bantuan Jepang</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto bantuan jepang ]</span>
                 </div>
                 <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
                 </div>
                 <div class="absolute bottom-5 left-5 right-5 text-white">
                   <span
                     class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
-                    FOTO • 05 OKT</span>
-                  <h4 class="font-serif text-xl font-normal">Kondisi Lahan Pasca-Padam</h4>
+                    FOTO</span>
+                  <h4 class="font-serif text-xl font-normal">Bantuan Pemadaman dari Jepang</h4>
                 </div>
               </div>
             </div>
@@ -514,11 +514,9 @@
     <section id="partisipasi" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
       <div class="space-y-3">
-        <span class="text-[10px] uppercase tracking-widest text-hutan font-bold block">MODUL 03 // ADUAN & PARTICIPATORY
-          AUDIT</span>
         <h2 class="font-serif text-3xl sm:text-5xl font-normal text-arang">Ruang Partisipasi Rakyat</h2>
         <p class="text-gambut text-xs sm:text-sm max-w-2xl leading-relaxed font-light">
-          Suara warga masuk di sini, dan laporanmu bisa dibaca semua orang.
+          Suarakan aspirasi, lawan kobaran api.
         </p>
       </div>
 
@@ -527,7 +525,7 @@
         <!-- masukkan -->
         <div class="lg:col-span-6 space-y-6">
           <div class="flex justify-between items-center border-b border-garis pb-3">
-            <h3 class="font-serif text-2xl font-normal text-arang">Papan Aspirasi Terbuka</h3>
+            <h3 class="font-serif text-2xl font-normal text-arang">Papan Aspirasi</h3>
             <span id="aspirasiCount" class="text-[10px] font-mono uppercase tracking-widest text-hutan font-bold">3
               Masukan</span>
           </div>
@@ -623,12 +621,12 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 
         <div class="space-y-4">
-          <span class="font-serif text-2xl font-normal tracking-[0.2em] text-hutan block uppercase">HUTAN TERBUKA</span>
+          <span class="font-serif text-2xl font-normal tracking-[0.2em] text-hutan block uppercase">FIRE WATCH</span>
           <p class="text-gambut text-xs leading-relaxed font-light">
             Sistem pengawasan publik independen untuk transparansi anggaran pemadaman dan pemulihan Karhutla.
           </p>
           <div class="text-[11px] uppercase tracking-widest font-mono text-hutan font-bold">
-            KARHUTLA oleh @U-NyxC
+            FireWatch oleh @U-NyxC
           </div>
         </div>
 
@@ -662,7 +660,7 @@
 
       <div
         class="border-t border-garis pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-gambut">
-        <p>© 2026 KARHUTLA oleh @U-NyxC. All rights reserved.</p>
+        <p>© 2026 FireWatch oleh @U-NyxC. All rights reserved.</p>
         <div class="flex space-x-6">
           <a href="#keuangan" class="hover:text-hutan">LKPP 2025 Audited</a>
           <a href="#lapangan" class="hover:text-hutan">Audit Ekologis</a>
@@ -708,14 +706,14 @@
     </div>
   </div>
 
-  <!-- ================= TOAST NOTIFICATION ================= -->
+  <!-- notif -->
   <div id="toast"
     class="fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3.5 shadow-2xl border border-hutan text-xs tracking-wider uppercase hidden items-center gap-3">
     <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
     <span id="toastMsg">Laporan contoh terkirim.</span>
   </div>
 
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- js -->
   <script>
     lucide.createIcons();
 
@@ -734,7 +732,7 @@
 
     let aspirasiCount = 3;
 
-    // Fungsi Menggeser Slider Foto Dokumentasi
+    // slider foto
     function slideGaleri(direction) {
       const slider = document.getElementById('galeriSlider');
       const scrollAmount = slider.clientWidth * 0.75;
