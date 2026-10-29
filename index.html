@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FireWatch</title>
+
+  <!-- google font: Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- tailwind css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // warna
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            abu: '#EDEFEA',       // Latar utama halaman
+            kertas: '#FAFAF7',    // Latar panel
+            hutan: '#0B3D2E',     // Hijau tua
+            bara: '#381208',      // Cokelat arang
+            arang: '#232622',     // teks utama
+            gambut: '#625A4F',    // muted
+            garis: '#CDD2C8',     // garis pemisah
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest: '.25em',
+            luxury: '.15em',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #EDEFEA;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CDD2C8;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0B3D2E;
+    }
+
+    /* hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* efek bg */
+    .glass-panel {
+      background: rgba(250, 250, 247, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .transition {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+
+<body
+  class="bg-abu text-arang font-sans antialiased selection:bg-hutan selection:text-white min-h-screen flex flex-col justify-between">
+
+  <!-- ================= header sm navbar ================= -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-garis transition-yonobi">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- Mobile Menu Button -->
+      <button onclick="toggleMobileNav()" class="lg:hidden text-arang p-2 hover:bg-abu rounded">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <!-- menu kiri -->
+      <nav class="hidden lg:flex items-center space-x-8 text-xs font-semibold uppercase tracking-luxury text-gambut">
+        <a href="#keuangan"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Keuangan</a>
+        <a href="#lapangan"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Lapangan</a>
+        <a href="#partisipasi"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Partisipasi</a>
+      </nav>
+
+      <!-- Logo (Center) -->
+      <a href="#" class="flex flex-col items-center group">
+        <span
+          class="font-serif text-2xl sm:text-3xl font-normal tracking-[0.25em] text-hutan group-hover:text-bara transition-colors uppercase">
+          FIRE WATCH
+        </span>
+        <span class="text-[8px] uppercase tracking-widest text-gambut -mt-1 font-bold">
+          Transparansi Karhutla
+        </span>
+      </a>
+
+      <!-- search sm link lapor -->
+      <div class="flex items-center space-x-4">
+        <button onclick="openSearchModal()" class="p-2 text-arang hover:text-hutan transition-colors" title="Cari Data">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </button>
+
+        <a href="#lapor"
+          class="hidden sm:inline-flex px-5 py-2.5 bg-bara text-white text-xs font-semibold uppercase tracking-widest hover:bg-hutan transition-yonobi items-center gap-2 border border-bara">
+          <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span>Lapor Titik Api</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- mobile menu -->
+    <div id="mobileNav" class="hidden lg:hidden border-b border-garis bg-kertas px-6 py-6 space-y-3">
+      <a href="#keuangan" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Keuangan (LKPP 2025)</a>
+      <a href="#lapangan" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Dokumentasi Lapangan</a>
+      <a href="#partisipasi" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Papan Aspirasi Rakyat</a>
+      <a href="#lapor" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-hutan font-bold py-2">Lapor Titik Api & Korupsi</a>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+
+    <!-- ================= hero bg api ================= -->
+    <section
+      class="relative min-h-[85vh] flex items-center justify-center border-b border-garis overflow-hidden bg-arang text-white">
+
+      <video autoplay loop muted playsinline
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 filter contrast-125">
+        <source src="/vid/wildfire-forest-fire-free-stock-video-1080-ytshorts.savetube.me.mp4" type="video/mp4">
+      </video>
+
+      <div class="absolute inset-0 bg-gradient-to-t from-bara via-arang/70 to-transparent z-10"></div>
+
+      <div class="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 space-y-8">
+
+
+
+        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.15] text-white tracking-tight">
+          Setiap rupiah penanganan kebakaran hutan <br class="hidden sm:inline">
+          <span class="italic font-normal text-red-200">bisa kamu periksa.</span>
+        </h1>
+
+        <p class="text-garis text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-light">
+          Lihat ke mana dana mengalir, buka bukti kerja di lapangan, dan laporkan titik api atau dugaan penyelewengan
+          anggaran.
+        </p>
+
+        <div class="pt-4 flex flex-wrap justify-center gap-4">
+          <a href="#lapor"
+            class="px-8 py-4 bg-hutan text-white text-xs font-bold uppercase tracking-widest hover:bg-bara transition-yonobi shadow-md flex items-center gap-2 border border-garis/40">
+            <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+            <span>Lapor Titik Api</span>
+          </a>
+          <a href="#keuangan"
+            class="px-8 py-4 bg-kertas/10 backdrop-blur-md text-white border border-garis/50 text-xs font-semibold uppercase tracking-widest hover:bg-kertas hover:text-arang transition-yonobi flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Lihat Buku Kas</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- sistem keuangan terbuka -->
+    <section id="keuangan" class="py-20 border-b border-garis max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="space-y-3 mb-12">
+        <h2 class="font-serif text-3xl sm:text-5xl font-times text-arang">Sistem Keuangan Terbuka (LKPP 2025 Audited)
+        </h2>
+        <p class="text-gambut text-xs sm:text-sm max-w-3xl leading-relaxed font-light">
+          Catatan resmi Laporan Keuangan Pemerintah Pusat Tahun 2025 Audited dari Kementerian Keuangan.
+        </p>
+      </div>
+
+      <!-- ringkasan kas -->
+      <div class="mb-12 space-y-4">
+        <h3 class="font-serif text-2xl font-normal text-arang">Buku Kas Publik Digital (APBN 2025)</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- pendapatan -->
+          <div class="bg-kertas border border-garis p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-gambut">
+              <span class="text-[10px] font-mono uppercase tracking-widest font-bold">Uang Masuk</span>
+              <i data-lucide="trending-up" class="w-4 h-4 text-emerald-700"></i>
+            </div>
+            <span class="text-xs text-gambut block">Pendapatan Negara</span>
+            <span class="font-serif text-4xl font-normal text-arang block tracking-tight">Rp 2.765,13 T</span>
+            <div class="text-[11px] font-mono text-gambut pt-2 border-t border-garis">
+              LKPP 2025 Audited (Target Rp 3.005,13 T)
+            </div>
+          </div>
+
+          <!-- belanja -->
+          <div class="bg-kertas border border-garis p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-gambut">
+              <span class="text-[10px] font-mono uppercase tracking-widest font-bold">Uang Keluar</span>
+              <i data-lucide="trending-down" class="w-4 h-4 text-hutan"></i>
+            </div>
+            <span class="text-xs text-gambut block">Belanja Negara</span>
+            <span class="font-serif text-4xl font-normal text-arang block tracking-tight">Rp 3.435,46 T</span>
+            <div class="text-[11px] font-mono text-gambut pt-2 border-t border-garis">
+              LKPP 2025 Audited (Pagu Rp 3.621,31 T)
+            </div>
+          </div>
+
+          <!-- silpa -->
+          <div class="bg-abu border border-hutan/40 p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-hutan">
+              <span class="text-[10px] font-mono uppercase tracking-widest font-bold">Saldo Sisa</span>
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+            </div>
+            <span class="text-xs text-gambut block">SILPA saat ini</span>
+            <span class="font-serif text-4xl font-bold text-hutan block tracking-tight">Rp 72,40 T</span>
+            <div class="text-[11px] font-mono text-hutan font-semibold pt-2 border-t border-garis">
+              Sisa Lebih Pembiayaan Anggaran Audited
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- rincian kas ke2 -->
+      <div class="space-y-6">
+
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-garis pb-3 gap-4">
+          <h3 class="font-serif text-2xl font-normal text-arang">Pos Transaksi LKPP 2025</h3>
+          <div class="relative w-full sm:w-72">
+            <input type="text" oninput="filterKas(this.value)" placeholder="Cari pos pendapatan / belanja..."
+              class="w-full px-3 py-2 bg-kertas border border-garis text-xs focus:outline-none focus:border-hutan">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-gambut absolute right-3 top-2.5"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          <!-- uang masuk boskyuh -->
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="flex justify-between items-center border-b border-garis pb-3">
+              <h4 class="font-serif text-xl font-normal text-arang flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-700"></span>
+                <span>Rincian Uang Masuk</span>
+              </h4>
+              <span class="text-[10px] font-mono text-gambut uppercase">Audited</span>
+            </div>
+
+            <ul id="listMasuk" class="divide-y divide-garis text-xs">
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Pendapatan Perpajakan</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 2.218,17 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">PNBP (Penerimaan Negara Bukan Pajak)</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 541,53 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Penerimaan Hibah</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 5,43 T</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Uang Keluar -->
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="flex justify-between items-center border-b border-garis pb-3">
+              <h4 class="font-serif text-xl font-normal text-arang flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-hutan"></span>
+                <span>Rincian Uang Keluar</span>
+              </h4>
+              <span class="text-[10px] font-mono text-gambut uppercase">Audited</span>
+            </div>
+
+            <ul id="listKeluar" class="divide-y divide-garis text-xs">
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Belanja Pemerintah Pusat</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 2.586,42 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Transfer ke Daerah</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 849,04 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Pembiayaan Neto</span>
+                  <span class="text-[10px] text-gambut font-mono">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-mono font-bold text-arang text-sm">Rp 742,73 T</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========== dokumentasi ========== -->
+    <section id="lapangan"
+      class="relative min-h-[90vh] flex flex-col justify-center border-b border-garis overflow-hidden bg-arang text-white py-20">
+
+      <!-- bg video drone -->
+      <video autoplay loop muted playsinline
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 filter contrast-125">
+        <source src="/vid/rekaman-video-dari-drone-kebakaran-hutan-indonesia-720-ytshorts.savetube.me.mp4"
+          type="video/mp4">
+      </video>
+
+      <!-- ovrl gelap -->
+      <div class="absolute inset-0 bg-gradient-to-t from-bara via-arang/75 to-arang/50 z-10"></div>
+
+      <!-- isi -->
+      <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">
+
+        <!-- heading sm kontrol slider -->
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6 text-center md:text-left border-b border-white/20 pb-6">
+          <div class="space-y-3 max-w-2xl mx-auto md:mx-0">
+            <h2 class="font-serif text-4xl sm:text-6xl font-light leading-tight text-white tracking-tight">
+              Dokumentasi Lapangan <span class="italic font-normal text-red-200">& Ekologis</span>
+            </h2>
+            <p class="text-garis text-sm sm:text-base leading-relaxed font-light">
+              Bukti kerja di lokasi, supaya angka di buku kas bisa dicocokkan dengan kenyataan.
+            </p>
+          </div>
+
+          <!-- kontrol -->
+          <div class="flex items-center justify-center md:justify-end gap-3">
+            <button onclick="slideGaleri(-1)"
+              class="p-3 bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white hover:text-arang transition-yonobi text-white rounded-none shadow-lg"
+              title="Foto Sebelumnya">
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <button onclick="slideGaleri(1)"
+              class="p-3 bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white hover:text-arang transition-yonobi text-white rounded-none shadow-lg"
+              title="Foto Selanjutnya">
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- slider -->
+        <div class="relative">
+          <div id="galeriSlider"
+            class="flex overflow-x-auto snap-x snap-mandatory gap-6 no-scrollbar scroll-smooth pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+
+            <!-- foto 1 -->
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="foto/titik-pantau-12sep.jpg" alt="Titik pantau 12 Sep"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Titik Pantau</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto/titik-pantau-12sep.jpg ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span
+                    class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
+                    FOTO • 12 SEP</span>
+                  <h4 class="font-serif text-xl font-normal">Titik Pantau Patroli Desa</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- foto2 -->
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="foto/posko-logistik-22sep.jpg" alt="Posko logistik 22 Sep"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Posko Logistik</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto/posko-logistik-22sep.jpg ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span
+                    class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
+                    FOTO • 22 SEP</span>
+                  <h4 class="font-serif text-xl font-normal">Posko Logistik & Peralatan</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- foto3 -->
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="foto/lahan-padam-5okt.jpg" alt="Lahan setelah padam 5 Okt"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Lahan Padam</span>
+                  <span class="text-xs text-garis mt-1 font-mono">[ foto/lahan-padam-5okt.jpg ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span
+                    class="text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-bold block mb-1">ARSIP
+                    FOTO • 05 OKT</span>
+                  <h4 class="font-serif text-xl font-normal">Kondisi Lahan Pasca-Padam</h4>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- progres bar pemulihan -->
+        <div class="bg-kertas/10 backdrop-blur-md border border-white/20 p-8 space-y-6 text-white shadow-xl">
+          <div class="border-b border-white/20 pb-4 flex justify-between items-center">
+            <h3 class="font-serif text-2xl font-normal text-white">Transparansi Pemulihan Lahan</h3>
+            <span class="text-xs font-mono text-emerald-400 font-semibold">Capaian Ekologis</span>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Bar 1 -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs sm:text-sm text-white font-semibold">
+                <span>Pembasahan gambut</span>
+                <span class="font-mono font-bold text-emerald-400">62%</span>
+              </div>
+              <div class="w-full bg-white/20 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full transition-all duration-700" style="width: 62%"></div>
+              </div>
+            </div>
+
+            <!-- Bar 2 -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs sm:text-sm text-white font-semibold">
+                <span>Sekat kanal</span>
+                <span class="font-mono font-bold text-emerald-400">45%</span>
+              </div>
+              <div class="w-full bg-white/20 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full transition-all duration-700" style="width: 45%"></div>
+              </div>
+            </div>
+
+            <!-- Bar 3 -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs sm:text-sm text-white font-semibold">
+                <span>Penanaman kembali</span>
+                <span class="font-mono font-bold text-emerald-400">28%</span>
+              </div>
+              <div class="w-full bg-white/20 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full transition-all duration-700" style="width: 28%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========== modul lapor ========== -->
+    <section id="partisipasi" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+      <div class="space-y-3">
+        <span class="text-[10px] uppercase tracking-widest text-hutan font-bold block">MODUL 03 // ADUAN & PARTICIPATORY
+          AUDIT</span>
+        <h2 class="font-serif text-3xl sm:text-5xl font-normal text-arang">Ruang Partisipasi Rakyat</h2>
+        <p class="text-gambut text-xs sm:text-sm max-w-2xl leading-relaxed font-light">
+          Suara warga masuk di sini, dan laporanmu bisa dibaca semua orang.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+        <!-- masukkan -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="flex justify-between items-center border-b border-garis pb-3">
+            <h3 class="font-serif text-2xl font-normal text-arang">Papan Aspirasi Terbuka</h3>
+            <span id="aspirasiCount" class="text-[10px] font-mono uppercase tracking-widest text-hutan font-bold">3
+              Masukan</span>
+          </div>
+
+          <div id="aspirasiFeed" class="space-y-4">
+
+            <div
+              class="bg-kertas border-l-4 border-hutan border-t border-r border-b border-garis p-5 shadow-2xs space-y-2">
+              <p class="font-serif text-base italic text-arang leading-relaxed">
+                “Mohon jadwal patroli desa dipasang di balai desa dan di situs ini.”
+              </p>
+              <div class="flex items-center gap-2 text-[11px] font-mono text-gambut">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-hutan"></i>
+                <span>Warga desa • 20 Okt</span>
+              </div>
+            </div>
+
+            <div
+              class="bg-kertas border-l-4 border-hutan border-t border-r border-b border-garis p-5 shadow-2xs space-y-2">
+              <p class="font-serif text-base italic text-arang leading-relaxed">
+                “Tolong rincian pembelian peralatan pemadam diberi harga satuan.”
+              </p>
+              <div class="flex items-center gap-2 text-[11px] font-mono text-gambut">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-hutan"></i>
+                <span>Mahasiswa • 22 Okt</span>
+              </div>
+            </div>
+
+            <div
+              class="bg-kertas border-l-4 border-hutan border-t border-r border-b border-garis p-5 shadow-2xs space-y-2">
+              <p class="font-serif text-base italic text-arang leading-relaxed">
+                “Bagaimana kami ikut menjadi relawan penanaman kembali?”
+              </p>
+              <div class="flex items-center gap-2 text-[11px] font-mono text-gambut">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-hutan"></i>
+                <span>Komunitas pemuda • 24 Okt</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- form lapor -->
+        <div id="lapor" class="lg:col-span-6 bg-kertas border border-garis p-8 shadow-2xs space-y-6">
+          <div class="border-b border-garis pb-4">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-hutan block font-bold">Formulir
+              Laporan</span>
+            <h3 class="font-serif text-2xl font-normal text-arang">Lapor Titik Api & Korupsi Anggaran</h3>
+          </div>
+
+          <form onsubmit="handleLaporSubmit(event)" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Jenis laporan</label>
+              <select id="jenisLaporan"
+                class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+                <option>Titik api</option>
+                <option>Dugaan korupsi anggaran</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Lokasi</label>
+              <input type="text" id="lokasiLaporan" required placeholder="Desa, kecamatan, atau patokan terdekat"
+                class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Ceritakan yang kamu
+                lihat</label>
+              <textarea id="ceritaLaporan" rows="4" required
+                placeholder="Apa yang terjadi, kapan, dan siapa yang terlibat..."
+                class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans leading-relaxed"></textarea>
+            </div>
+
+            <button type="submit"
+              class="w-full py-3.5 bg-bara text-white text-xs font-bold uppercase tracking-widest hover:bg-hutan transition-colors shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Kirim Laporan</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- footer -->
+  <footer class="bg-kertas border-t border-garis py-16 text-xs text-gambut">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+        <div class="space-y-4">
+          <span class="font-serif text-2xl font-normal tracking-[0.2em] text-hutan block uppercase">HUTAN TERBUKA</span>
+          <p class="text-gambut text-xs leading-relaxed font-light">
+            Sistem pengawasan publik independen untuk transparansi anggaran pemadaman dan pemulihan Karhutla.
+          </p>
+          <div class="text-[11px] uppercase tracking-widest font-mono text-hutan font-bold">
+            KARHUTLA oleh @U-NyxC
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Menu Utama</span>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#keuangan" class="hover:text-hutan transition-colors">Buku Kas (LKPP 2025)</a></li>
+            <li><a href="#lapangan" class="hover:text-hutan transition-colors">Dokumentasi Lapangan</a></li>
+            <li><a href="#partisipasi" class="hover:text-hutan transition-colors">Papan Aspirasi</a></li>
+            <li><a href="#lapor" class="hover:text-hutan transition-colors">Lapor Titik Api</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Sumber Data Resmi</span>
+          <p class="text-xs text-gambut leading-relaxed">
+            Laporan Keuangan Pemerintah Pusat (LKPP) 2025 Audited • Kementerian Keuangan RI.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Aksi Publik</span>
+          <p class="text-xs text-gambut">Temukan kejanggalan atau titik api baru di lapangan?</p>
+          <a href="#lapor"
+            class="w-full py-2.5 bg-hutan text-white text-[10px] uppercase tracking-widest hover:bg-bara transition-colors font-bold text-center block">
+            Kirim Laporan Warga
+          </a>
+        </div>
+
+      </div>
+
+      <div
+        class="border-t border-garis pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-gambut">
+        <p>© 2026 KARHUTLA oleh @U-NyxC. All rights reserved.</p>
+        <div class="flex space-x-6">
+          <a href="#keuangan" class="hover:text-hutan">LKPP 2025 Audited</a>
+          <a href="#lapangan" class="hover:text-hutan">Audit Ekologis</a>
+          <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="hover:text-hutan">Ke
+            Atas ↑</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ================= SEARCH MODAL ================= -->
+  <div id="searchModal"
+    class="fixed inset-0 z-50 bg-arang/70 backdrop-blur-sm hidden items-start justify-center pt-20 px-4">
+    <div class="bg-kertas border border-garis w-full max-w-2xl p-6 shadow-2xl space-y-6">
+      <div class="flex justify-between items-center border-b border-garis pb-3">
+        <div class="flex items-center gap-3 w-full">
+          <i data-lucide="search" class="w-5 h-5 text-hutan"></i>
+          <input type="text" id="modalSearchInput" oninput="handleModalSearch(this.value)"
+            placeholder="Cari pos keuangan, dokumentasi, atau progres..."
+            class="w-full bg-transparent text-sm font-serif text-arang focus:outline-none">
+        </div>
+        <button onclick="closeSearchModal()" class="text-gambut hover:text-arang">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 max-h-80 overflow-y-auto">
+        <div class="text-[10px] uppercase tracking-widest text-hutan font-bold">Pencarian Cepat</div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button onclick="quickModalSearch('Perpajakan')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Pendapatan Perpajakan</button>
+          <button onclick="quickModalSearch('Transfer')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Transfer ke Daerah</button>
+          <button onclick="quickModalSearch('Gambut')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Pembasahan Gambut</button>
+          <button onclick="quickModalSearch('SILPA')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">SILPA 2025</button>
+        </div>
+
+        <div id="modalSearchResults" class="space-y-2 pt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast"
+    class="fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3.5 shadow-2xl border border-hutan text-xs tracking-wider uppercase hidden items-center gap-3">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Laporan contoh terkirim.</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    lucide.createIcons();
+
+    const SEARCH_ITEMS = [
+      { cat: 'Keuangan', title: 'Pendapatan Perpajakan', detail: 'LKPP 2025 Audited: Rp 2.218,17 T' },
+      { cat: 'Keuangan', title: 'PNBP', detail: 'LKPP 2025 Audited: Rp 541,53 T' },
+      { cat: 'Keuangan', title: 'Penerimaan Hibah', detail: 'LKPP 2025 Audited: Rp 5,43 T' },
+      { cat: 'Keuangan', title: 'Belanja Pemerintah Pusat', detail: 'LKPP 2025 Audited: Rp 2.586,42 T' },
+      { cat: 'Keuangan', title: 'Transfer ke Daerah', detail: 'LKPP 2025 Audited: Rp 849,04 T' },
+      { cat: 'Keuangan', title: 'Pembiayaan Neto', detail: 'LKPP 2025 Audited: Rp 742,73 T' },
+      { cat: 'Keuangan', title: 'SILPA saat ini', detail: 'Saldo Sisa: Rp 72,40 T' },
+      { cat: 'Lapangan', title: 'Pembasahan gambut', detail: 'Capaian: 62%' },
+      { cat: 'Lapangan', title: 'Sekat kanal', detail: 'Capaian: 45%' },
+      { cat: 'Lapangan', title: 'Penanaman kembali', detail: 'Capaian: 28%' }
+    ];
+
+    let aspirasiCount = 3;
+
+    // Fungsi Menggeser Slider Foto Dokumentasi
+    function slideGaleri(direction) {
+      const slider = document.getElementById('galeriSlider');
+      const scrollAmount = slider.clientWidth * 0.75;
+      slider.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+
+    function filterKas(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('#listMasuk li').forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+      });
+      document.querySelectorAll('#listKeluar li').forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function handleLaporSubmit(e) {
+      e.preventDefault();
+      const jenis = document.getElementById('jenisLaporan').value;
+      const lokasi = document.getElementById('lokasiLaporan').value;
+      const cerita = document.getElementById('ceritaLaporan').value;
+
+      const feed = document.getElementById('aspirasiFeed');
+      const item = document.createElement('div');
+      item.className = "bg-kertas border-l-4 border-hutan border-t border-r border-b border-garis p-5 shadow-2xs space-y-2";
+      item.innerHTML = `
+        <div class="flex justify-between items-center text-[10px] font-mono text-hutan font-bold uppercase">
+          <span>[ ${jenis.toUpperCase()} ]</span>
+          <span>Baru saja</span>
+        </div>
+        <p class="font-serif text-base italic text-arang leading-relaxed">
+          “${cerita}”
+        </p>
+        <div class="flex items-center gap-2 text-[11px] font-mono text-gambut">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-hutan"></i>
+          <span>Lokasi: ${lokasi}</span>
+        </div>
+      `;
+      feed.prepend(item);
+      lucide.createIcons();
+
+      aspirasiCount += 1;
+      document.getElementById('aspirasiCount').innerText = `${aspirasiCount} Masukan`;
+
+      e.target.reset();
+      showToast('Laporan contoh terkirim & diterbitkan ke papan aspirasi.');
+    }
+
+    function openSearchModal() {
+      document.getElementById('searchModal').classList.remove('hidden');
+      document.getElementById('searchModal').classList.add('flex');
+      document.getElementById('modalSearchInput').focus();
+    }
+
+    function closeSearchModal() {
+      document.getElementById('searchModal').classList.add('hidden');
+      document.getElementById('searchModal').classList.remove('flex');
+    }
+
+    function handleModalSearch(val) {
+      const res = document.getElementById('modalSearchResults');
+      res.innerHTML = '';
+      if (!val.trim()) return;
+
+      const q = val.toLowerCase();
+      const matches = SEARCH_ITEMS.filter(i => i.title.toLowerCase().includes(q) || i.detail.toLowerCase().includes(q));
+
+      if (matches.length === 0) {
+        res.innerHTML = `<p class="text-xs text-gambut py-2">Tidak ada data ditemukan.</p>`;
+        return;
+      }
+
+      matches.forEach(m => {
+        const div = document.createElement('div');
+        div.className = "p-3 bg-abu border border-garis flex justify-between items-center hover:border-hutan cursor-pointer";
+        div.onclick = () => {
+          closeSearchModal();
+          location.hash = m.cat === 'Keuangan' ? '#keuangan' : '#lapangan';
+        };
+        div.innerHTML = `
+          <div>
+            <span class="text-[10px] font-mono text-hutan font-bold uppercase block">${m.cat}</span>
+            <span class="font-serif text-sm text-arang">${m.title}</span>
+          </div>
+          <span class="font-mono text-xs text-gambut">${m.detail}</span>
+        `;
+        res.appendChild(div);
+      });
+    }
+
+    function quickModalSearch(term) {
+      document.getElementById('modalSearchInput').value = term;
+      handleModalSearch(term);
+    }
+
+    function toggleMobileNav() {
+      document.getElementById('mobileNav').classList.toggle('hidden');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>
