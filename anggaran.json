@@ -1,0 +1,49 @@
+{
+    "ringkasan": {
+        "pendapatan_triliun": "Rp 2.765,13 T",
+        "belanja_triliun": "Rp 3.435,46 T",
+        "silpa_triliun": "Rp 72,40 T"
+    },
+    "sektor_penyerapan": [
+        {
+            "id": "pemadaman",
+            "nama": "1. Operasional Patroli & Helikopter Water Bombing",
+            "pagu_miliar": 1536,
+            "realisasi_miliar": 1420,
+            "realisasi_triliun": 1.42,
+            "persentase": 92.4,
+            "keterangan": "Pagu: Rp 1.536 M • Realisasi Darurat Karhutla",
+            "warna": "#0B3D2E"
+        },
+        {
+            "id": "restorasi",
+            "nama": "2. Pembasahan Gambut & Sekat Kanal Ekologis",
+            "pagu_miliar": 1088,
+            "realisasi_miliar": 850,
+            "realisasi_triliun": 0.85,
+            "persentase": 78.1,
+            "keterangan": "Pagu: Rp 1.088 M • Badan Restorasi Gambut & Mangrove",
+            "warna": "#047857"
+        },
+        {
+            "id": "logistik",
+            "nama": "3. Peralatan Logistik MPA & Posko Desa Rawan",
+            "pagu_miliar": 732,
+            "realisasi_miliar": 620,
+            "realisasi_triliun": 0.62,
+            "persentase": 84.6,
+            "keterangan": "Pagu: Rp 732 M • Pengadaan Pompa Air & APD Relawan",
+            "warna": "#92400E"
+        },
+        {
+            "id": "bansos",
+            "nama": "4. Bansos Kesehatan & Kompensasi Asap Warga",
+            "pagu_miliar": 500,
+            "realisasi_miliar": 325,
+            "realisasi_triliun": 0.325,
+            "persentase": 65.0,
+            "keterangan": "Pagu: Rp 500 M • Pembagian Oksigen & Pelayanan ISPA",
+            "warna": "#381208"
+        }
+    ]
+}
