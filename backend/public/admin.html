@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,102 +19,40 @@
       theme: {
         extend: {
           colors: {
-            abu: '#EDEFEA', kertas: '#FAFAF7', hutan: '#0B3D2E', bara: '#381208',
-            arang: '#232622', gambut: '#625A4F', garis: '#CDD2C8',
+            abu: '#ECE8E1', kertas: '#FFFFFF', hutan: '#FF4655', bara: '#0F1923',
+            arang: '#0F1923', gambut: '#5C6670', garis: '#D4D0C8',
           },
-          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          fontFamily: { sans: ['Archivo', 'system-ui', 'sans-serif'] },
         }
       }
     }
   </script>
 
   <style>
+    h1, h2 { font-family: 'Anton', Impact, sans-serif; text-transform: uppercase; font-weight: 400; letter-spacing: .01em; }
+    body { border-top: 0; }
     .isian {
-      width: 100%;
-      padding: .55rem .75rem;
-      background: #EDEFEA;
-      border: 1px solid #CDD2C8;
-      font-size: .8125rem;
-      color: #232622;
+      width: 100%; padding: .55rem .75rem; background: #ECE8E1; border: 1px solid #D4D0C8;
+      font-size: .8125rem; color: #0F1923;
     }
-
-    .isian:focus {
-      outline: 2px solid #0B3D2E;
-      outline-offset: 1px;
-    }
-
-    .label {
-      display: block;
-      font-size: .75rem;
-      font-weight: 600;
-      color: #625A4F;
-      margin-bottom: .25rem;
-    }
-
+    .isian:focus { outline: 2px solid #FF4655; outline-offset: 1px; }
+    .label { display: block; font-size: .75rem; font-weight: 600; color: #5C6670; margin-bottom: .25rem; }
     .tombol {
-      padding: .45rem .9rem;
-      font-size: .75rem;
-      font-weight: 600;
-      border: 1px solid #0B3D2E;
-      background: #0B3D2E;
-      color: #fff;
-      cursor: pointer;
+      padding: .45rem .9rem; font-size: .75rem; font-weight: 600; border: 1px solid #FF4655;
+      background: #FF4655; color: #fff; cursor: pointer;
     }
-
-    .tombol:hover {
-      background: #381208;
-      border-color: #381208;
-    }
-
-    .tombol:focus-visible {
-      outline: 2px solid #381208;
-      outline-offset: 2px;
-    }
-
-    .tombol.kosong {
-      background: transparent;
-      color: #0B3D2E;
-    }
-
-    .tombol.kosong:hover {
-      background: #EDEFEA;
-    }
-
-    .tombol.bahaya {
-      background: transparent;
-      color: #991b1b;
-      border-color: #991b1b;
-    }
-
-    .tombol.bahaya:hover {
-      background: #fee2e2;
-    }
-
-    .tab {
-      padding: .6rem 1rem;
-      font-size: .8125rem;
-      font-weight: 600;
-      color: #625A4F;
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab[aria-selected="true"] {
-      color: #0B3D2E;
-      border-bottom-color: #0B3D2E;
-    }
-
-    th {
-      text-align: left;
-      font-weight: 600;
-      color: #625A4F;
-      font-size: .75rem;
-      padding: .5rem .75rem;
-    }
-
-    td {
-      padding: .6rem .75rem;
-      vertical-align: top;
-    }
+    .tombol:hover { background: #0F1923; border-color: #0F1923; }
+    header .tombol.kosong:hover { background: #FF4655; color: #fff; }
+    .tombol:focus-visible { outline: 2px solid #0F1923; outline-offset: 2px; }
+    .tombol.kosong { background: transparent; color: #FF4655; }
+    .tombol.kosong:hover { background: #ECE8E1; }
+    .tombol.bahaya { background: transparent; color: #991b1b; border-color: #991b1b; }
+    .tombol.bahaya:hover { background: #fee2e2; }
+    .tab { padding: .6rem 1rem; font-size: .8125rem; font-weight: 700; text-transform: uppercase; color: #9AA5B0; border-bottom: 2px solid transparent; }
+    .tab[aria-selected="true"] { color: #FF4655; border-bottom-color: #FF4655; }
+    .tab:hover { color: #fff; }
+    th { text-align: left; font-weight: 600; color: #5C6670; font-size: .75rem; padding: .5rem .75rem; }
+    td { padding: .6rem .75rem; vertical-align: top; }
   </style>
 </head>
 
@@ -143,14 +81,14 @@
 
   <!-- ============ PANEL ============ -->
   <div id="viewPanel" class="hidden">
-    <header class="bg-kertas border-b border-garis">
+    <header class="bg-arang text-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         <div class="flex items-baseline gap-3">
-          <span class="font-semibold text-hutan">FireWatch</span>
-          <span class="text-xs text-gambut">Panel admin</span>
+          <span class="font-judul text-2xl uppercase leading-none" style="font-family:Anton,Impact,sans-serif">FIRE <span class="text-hutan">WATCH</span></span>
+          <span class="text-xs text-[#9AA5B0]">Panel admin</span>
         </div>
         <div class="flex items-center gap-3 text-xs">
-          <span class="text-gambut">Masuk: <strong id="namaAdmin" class="text-arang"></strong></span>
+          <span class="text-[#9AA5B0]">Masuk: <strong id="namaAdmin" class="text-white"></strong></span>
           <a href="/" class="text-hutan hover:underline">Lihat situs</a>
           <button id="btnKeluar" class="tombol kosong">Keluar</button>
         </div>
@@ -177,14 +115,11 @@
           <h2 class="text-lg font-semibold">Ringkasan Buku Kas</h2>
           <form id="formRingkasan" class="grid sm:grid-cols-4 gap-4 items-end">
             <div><label class="label" for="r_pendapatan">Pendapatan (triliun Rp)</label>
-              <input id="r_pendapatan" type="number" step="any" min="0" class="isian" required>
-            </div>
+              <input id="r_pendapatan" type="number" step="any" min="0" class="isian" required></div>
             <div><label class="label" for="r_belanja">Belanja (triliun Rp)</label>
-              <input id="r_belanja" type="number" step="any" min="0" class="isian" required>
-            </div>
+              <input id="r_belanja" type="number" step="any" min="0" class="isian" required></div>
             <div><label class="label" for="r_silpa">SILPA (triliun Rp)</label>
-              <input id="r_silpa" type="number" step="any" min="0" class="isian" required>
-            </div>
+              <input id="r_silpa" type="number" step="any" min="0" class="isian" required></div>
             <button class="tombol py-2.5">Simpan ringkasan</button>
           </form>
         </div>
@@ -193,44 +128,24 @@
           <h2 class="text-lg font-semibold">Penyerapan anggaran per pos</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-sm min-w-[640px]">
-              <thead>
-                <tr class="border-b border-garis">
-                  <th>Pos</th>
-                  <th>Kelompok</th>
-                  <th>Pagu (M)</th>
-                  <th>Realisasi (M)</th>
-                  <th>Serap</th>
-                  <th></th>
-                </tr>
-              </thead>
+              <thead><tr class="border-b border-garis"><th>Pos</th><th>Kelompok</th><th>Pagu (M)</th><th>Realisasi (M)</th><th>Serap</th><th></th></tr></thead>
               <tbody id="tabelSektor" class="divide-y divide-garis"></tbody>
             </table>
           </div>
           <form id="formSektor" class="border-t border-garis pt-5 grid sm:grid-cols-6 gap-4 items-end">
             <input type="hidden" id="s_id">
             <div class="sm:col-span-3"><label class="label" for="s_nama">Nama pos</label>
-              <input id="s_nama" class="isian" required maxlength="120">
-            </div>
+              <input id="s_nama" class="isian" required maxlength="120"></div>
             <div class="sm:col-span-3"><label class="label" for="s_deskripsi">Keterangan singkat</label>
-              <input id="s_deskripsi" class="isian" required maxlength="150"
-                placeholder="mis. Pengadaan Pompa Air & APD">
-            </div>
+              <input id="s_deskripsi" class="isian" required maxlength="150" placeholder="mis. Pengadaan Pompa Air & APD"></div>
             <div><label class="label" for="s_kelompok">Kelompok grafik</label>
-              <select id="s_kelompok" class="isian">
-                <option value="pemadaman">Pemadaman</option>
-                <option value="restorasi">Restorasi</option>
-              </select>
-            </div>
+              <select id="s_kelompok" class="isian"><option value="pemadaman">Pemadaman</option><option value="restorasi">Restorasi</option></select></div>
             <div><label class="label" for="s_pagu">Pagu (miliar Rp)</label>
-              <input id="s_pagu" type="number" step="any" min="0.01" class="isian" required>
-            </div>
+              <input id="s_pagu" type="number" step="any" min="0.01" class="isian" required></div>
             <div><label class="label" for="s_realisasi">Realisasi (miliar Rp)</label>
-              <input id="s_realisasi" type="number" step="any" min="0" class="isian" required>
-            </div>
+              <input id="s_realisasi" type="number" step="any" min="0" class="isian" required></div>
             <div><label class="label" for="s_warna">Warna grafik</label>
-              <input id="s_warna" type="color" value="#0B3D2E" class="isian"
-                style="padding:.15rem .25rem;height:2.4rem">
-            </div>
+              <input id="s_warna" type="color" value="#FF4655" class="isian" style="padding:.15rem .25rem;height:2.4rem"></div>
             <div class="sm:col-span-2 flex gap-2">
               <button class="tombol py-2.5" id="btnSimpanSektor">Tambah pos</button>
               <button type="button" class="tombol kosong py-2.5 hidden" id="btnBatalSektor">Batal</button>
@@ -242,35 +157,20 @@
           <h2 class="text-lg font-semibold">Rincian uang masuk &amp; keluar</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-sm min-w-[560px]">
-              <thead>
-                <tr class="border-b border-garis">
-                  <th>Jenis</th>
-                  <th>Pos</th>
-                  <th>Sumber</th>
-                  <th>Nilai</th>
-                  <th></th>
-                </tr>
-              </thead>
+              <thead><tr class="border-b border-garis"><th>Jenis</th><th>Pos</th><th>Sumber</th><th>Nilai</th><th></th></tr></thead>
               <tbody id="tabelPos" class="divide-y divide-garis"></tbody>
             </table>
           </div>
           <form id="formPos" class="border-t border-garis pt-5 grid sm:grid-cols-5 gap-4 items-end">
             <input type="hidden" id="p_id">
             <div><label class="label" for="p_jenis">Jenis</label>
-              <select id="p_jenis" class="isian">
-                <option value="masuk">Uang masuk</option>
-                <option value="keluar">Uang keluar</option>
-              </select>
-            </div>
+              <select id="p_jenis" class="isian"><option value="masuk">Uang masuk</option><option value="keluar">Uang keluar</option></select></div>
             <div class="sm:col-span-2"><label class="label" for="p_nama">Nama pos</label>
-              <input id="p_nama" class="isian" required maxlength="120">
-            </div>
+              <input id="p_nama" class="isian" required maxlength="120"></div>
             <div><label class="label" for="p_sumber">Sumber data</label>
-              <input id="p_sumber" class="isian" required maxlength="120" value="LKPP 2025 Audited">
-            </div>
+              <input id="p_sumber" class="isian" required maxlength="120" value="LKPP 2025 Audited"></div>
             <div><label class="label" for="p_nilai">Nilai (triliun Rp)</label>
-              <input id="p_nilai" type="number" step="any" min="0" class="isian" required>
-            </div>
+              <input id="p_nilai" type="number" step="any" min="0" class="isian" required></div>
             <div class="sm:col-span-5 flex gap-2">
               <button class="tombol py-2.5" id="btnSimpanPos">Tambah pos</button>
               <button type="button" class="tombol kosong py-2.5 hidden" id="btnBatalPos">Batal</button>
@@ -281,19 +181,10 @@
 
       <!-- ---- Langganan ---- -->
       <section id="tab-langganan" class="hidden space-y-4">
-        <p class="text-xs text-gambut">Berisi nomor HP warga dan relawan. Data ini tidak ditampilkan di situs publik.
-        </p>
+        <p class="text-xs text-gambut">Berisi nomor HP warga dan relawan. Data ini tidak ditampilkan di situs publik.</p>
         <div class="bg-kertas border border-garis overflow-x-auto">
           <table class="w-full text-sm min-w-[520px]">
-            <thead>
-              <tr class="border-b border-garis">
-                <th>Nomor</th>
-                <th>Peran</th>
-                <th>Zona</th>
-                <th>Terdaftar</th>
-                <th></th>
-              </tr>
-            </thead>
+            <thead><tr class="border-b border-garis"><th>Nomor</th><th>Peran</th><th>Zona</th><th>Terdaftar</th><th></th></tr></thead>
             <tbody id="tabelLangganan" class="divide-y divide-garis"></tbody>
           </table>
         </div>
@@ -302,8 +193,7 @@
   </div>
 
   <div id="toast" role="status"
-    class="hidden fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3 text-xs shadow-2xl border border-hutan max-w-xs">
-  </div>
+    class="hidden fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3 text-xs shadow-2xl border border-hutan max-w-xs"></div>
 
   <script>
     const $ = (id) => document.getElementById(id);
@@ -512,7 +402,7 @@
     function resetFormSektor() {
       $('formSektor').reset();
       $('s_id').value = '';
-      $('s_warna').value = '#0B3D2E';
+      $('s_warna').value = '#FF4655';
       $('btnSimpanSektor').textContent = 'Tambah pos';
       $('btnBatalSektor').classList.add('hidden');
     }
