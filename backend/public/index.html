@@ -4,11 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FireWatch — Transparansi Anggaran Karhutla</title>
+  <title>FireWatch</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap"
+    rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -38,65 +40,272 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    html { scroll-behavior: smooth; }
-    body { background: #0F1923; font-family: 'Archivo', system-ui, sans-serif; }
-    .judul { font-family: 'Anton', Impact, sans-serif; text-transform: uppercase; line-height: 1.05; letter-spacing: .01em; }
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0F1923;
+      font-family: 'Archivo', system-ui, sans-serif;
+    }
+
+    .judul {
+      font-family: 'Anton', Impact, sans-serif;
+      text-transform: uppercase;
+      line-height: 1.05;
+      letter-spacing: .01em;
+    }
 
     /* Tab navigasi dengan garis miring merah */
-    .tab { position: relative; display: block; text-align: center; padding: 18px 0 20px; font-weight: 700; font-size: 13px;
-      letter-spacing: .03em; text-transform: uppercase; color: #fff; transition: color .2s; }
-    .tab:hover { color: #FF4655; }
-    .tab::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: #FF4655;
-      clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%); opacity: 0; transform: scaleX(.6); transition: .25s; }
-    .tab.aktif { color: #FF4655; }
-    .tab.aktif::after { opacity: 1; transform: none; }
+    .tab {
+      position: relative;
+      display: block;
+      text-align: center;
+      padding: 18px 0 20px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: #fff;
+      transition: color .2s;
+    }
+
+    .tab:hover {
+      color: #FF4655;
+    }
+
+    .tab::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 6px;
+      background: #FF4655;
+      clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+      opacity: 0;
+      transform: scaleX(.6);
+      transition: .25s;
+    }
+
+    .tab.aktif {
+      color: #FF4655;
+    }
+
+    .tab.aktif::after {
+      opacity: 1;
+      transform: none;
+    }
 
     /* Tombol: sisi kanan miring */
-    .tombol { display: inline-block; padding: 22px 32px 22px 32px; background: #FF4655; color: #fff; font-weight: 700; font-size: 13px;
-      letter-spacing: .02em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
-      transition: background .2s, transform .2s; border: 0; cursor: pointer; text-align: left; }
-    .tombol:hover { background: #ff2d40; transform: translateX(2px); }
-    .tombol:disabled { opacity: .6; cursor: wait; }
-    .tombol-garis { display: inline-block; padding: 20px 52px 20px 28px; border: 2px solid #FF4655; color: #fff; font-weight: 700; font-size: 13px;
-      letter-spacing: .02em; text-transform: uppercase; transition: background .2s; }
-    .tombol-garis:hover { background: #FF4655; }
-    .tombol-kecil { padding: 12px 18px; font-size: 12px; }
+    .tombol {
+      display: inline-block;
+      padding: 22px 32px 22px 32px;
+      background: #FF4655;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+      transition: background .2s, transform .2s;
+      border: 0;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .tombol:hover {
+      background: #ff2d40;
+      transform: translateX(2px);
+    }
+
+    .tombol:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .tombol-garis {
+      display: inline-block;
+      padding: 20px 52px 20px 28px;
+      border: 2px solid #FF4655;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      transition: background .2s;
+    }
+
+    .tombol-garis:hover {
+      background: #FF4655;
+    }
+
+    .tombol-kecil {
+      padding: 12px 18px;
+      font-size: 12px;
+    }
 
     /* Hero */
-    .hero { clip-path: polygon(0 0, 100% 0, 100% 93%, 0 100%); }
-    .hero-judul { font-size: clamp(88px, 22vw, 190px); }
+    .hero {
+      clip-path: polygon(0 0, 100% 0, 100% 93%, 0 100%);
+    }
+
+    .hero-judul {
+      font-size: clamp(88px, 22vw, 190px);
+    }
 
     /* Bagian dokumentasi: tepi atas miring */
-    .miring-atas { clip-path: polygon(0 44px, 100% 0, 100% 100%, 0 100%); padding-top: 96px; }
+    .miring-atas {
+      clip-path: polygon(0 44px, 100% 0, 100% 100%, 0 100%);
+      padding-top: 96px;
+    }
 
     /* Form */
-    .lbl { display: block; font-size: 12px; font-weight: 800; letter-spacing: .01em; text-transform: uppercase; color: #0F1923; margin-bottom: 8px; }
-    .isian { width: 100%; background: #fff; border: 2px solid #ccc; padding: 18px 20px; font-size: 15px; color: #0F1923; border-radius: 0; font-family: inherit; }
-    .isian::placeholder { color: #999; }
-    .isian:focus { outline: none; border-color: #FF4655; }
-    select.isian { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%230F1923' stroke-width='2'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 20px center; padding-right: 48px; }
-    input[type=file].isian { padding: 14px 16px; font-size: 13px; }
-    input[type=file]::file-selector-button { background: #0F1923; color: #fff; border: 0; padding: 8px 14px; margin-right: 12px; font-weight: 700; font-size: 11px; text-transform: uppercase; cursor: pointer; }
+    .lbl {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      color: #0F1923;
+      margin-bottom: 8px;
+    }
 
-    .vertikal { writing-mode: vertical-rl; text-orientation: upright; letter-spacing: .45em; font-size: 20px; }
+    .isian {
+      width: 100%;
+      background: #fff;
+      border: 2px solid #ccc;
+      padding: 18px 20px;
+      font-size: 15px;
+      color: #0F1923;
+      border-radius: 0;
+      font-family: inherit;
+    }
 
-    .kartu-putih { background: #fff; color: #0F1923; }
-    .baris { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 2px solid #EEE; font-size: 15px; }
-    .baris:last-child { border-bottom: 0; }
-    .baris .nilai { color: #6b7580; white-space: nowrap; font-weight: 600; }
+    .isian::placeholder {
+      color: #999;
+    }
 
-    .pil { padding: 10px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; border: 2px solid #2a3a4a; color: #fff; transition: .2s; }
-    .pil.aktif, .pil:hover { background: #FF4655; border-color: #FF4655; }
+    .isian:focus {
+      outline: none;
+      border-color: #FF4655;
+    }
 
-    #ewsMap { z-index: 1; height: 360px; }
-    .leaflet-container { font-family: 'Archivo', sans-serif; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
+    select.isian {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%230F1923' stroke-width='2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      padding-right: 48px;
+    }
 
-    .view { display: none; }
-    .view.aktif { display: block; animation: masuk .35s ease; }
-    @keyframes masuk { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) { .view.aktif { animation: none; } html { scroll-behavior: auto; } }
+    input[type=file].isian {
+      padding: 14px 16px;
+      font-size: 13px;
+    }
+
+    input[type=file]::file-selector-button {
+      background: #0F1923;
+      color: #fff;
+      border: 0;
+      padding: 8px 14px;
+      margin-right: 12px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .vertikal {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: .45em;
+      font-size: 20px;
+    }
+
+    .kartu-putih {
+      background: #fff;
+      color: #0F1923;
+    }
+
+    .baris {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 2px solid #EEE;
+      font-size: 15px;
+    }
+
+    .baris:last-child {
+      border-bottom: 0;
+    }
+
+    .baris .nilai {
+      color: #6b7580;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .pil {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: 2px solid #2a3a4a;
+      color: #fff;
+      transition: .2s;
+    }
+
+    .pil.aktif,
+    .pil:hover {
+      background: #FF4655;
+      border-color: #FF4655;
+    }
+
+    #ewsMap {
+      z-index: 1;
+      height: 360px;
+    }
+
+    .leaflet-container {
+      font-family: 'Archivo', sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.aktif {
+      display: block;
+      animation: masuk .35s ease;
+    }
+
+    @keyframes masuk {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .view.aktif {
+        animation: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
   </style>
 </head>
 
@@ -105,7 +314,8 @@
   <!-- ================= HEADER ================= -->
   <header class="sticky top-0 z-40 bg-navy">
     <div class="max-w-5xl mx-auto">
-      <a href="#beranda" data-go="beranda" class="flex items-center gap-4 px-4 pt-3 pb-2" aria-label="FireWatch — Beranda">
+      <a href="#beranda" data-go="beranda" class="flex items-center gap-4 px-4 pt-3 pb-2"
+        aria-label="FireWatch — Beranda">
         <img src="pic/logoFW.PNG" alt="" width="30" height="30" class="w-[30px] h-[30px] object-contain">
         <span class="judul text-[30px] leading-none text-white">FIRE <span class="text-merah">WATCH</span></span>
       </a>
@@ -126,9 +336,9 @@
         <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-50">
           <source src="/vid/wildfire-forest-fire-free-stock-video-1080-ytshorts.savetube.me.mp4" type="video/mp4">
         </video>
-        <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(15,25,35,0) 0%, #0F1923 100%);"></div>
+        <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(15,25,35,0) 0%, #0F1923 100%);">
+        </div>
         <div class="relative max-w-5xl mx-auto px-4 pt-10 pb-28 sm:pt-16 sm:pb-36">
-          <p class="text-merah text-xs font-extrabold italic uppercase tracking-wide">// Karhutla · Transparansi</p>
           <h1 class="judul hero-judul mt-16 sm:mt-24 text-white">Fire<br>Watch</h1>
           <p class="text-koral font-semibold text-[17px] leading-relaxed max-w-[540px] mt-2">
             Setiap rupiah penanganan kebakaran hutan bisa kamu periksa. Lihat ke mana uang mengalir, buka bukti kerja di
@@ -147,13 +357,20 @@
 
           <div class="mt-6 grid md:grid-cols-2 gap-8 items-start">
             <figure>
-              <img src="pic/upaya.png" alt="Petugas memadamkan api saat malam hari" class="w-full aspect-[16/9] object-cover">
-              <figcaption class="mt-3 text-sm font-semibold">Petugas di lapangan memadamkan api saat malam hari.</figcaption>
+              <img src="pic/upaya.png" alt="Petugas memadamkan api saat malam hari"
+                class="w-full aspect-[16/9] object-cover">
+              <figcaption class="mt-3 text-sm font-semibold">Petugas di lapangan memadamkan api saat malam hari.
+              </figcaption>
             </figure>
             <div>
-              <p class="border-l-4 border-merah pl-4 py-3 font-bold text-[15px] leading-snug">Karhutla: ancaman nyata bagi lingkungan, ekonomi, dan kehidupan.</p>
-              <p class="mt-6 text-[15px] leading-relaxed">Karhutla (kebakaran hutan dan lahan) adalah peristiwa terbakarnya hutan dan/atau lahan, termasuk lahan gambut, yang menyebabkan kerusakan lingkungan, kerugian ekonomi, serta gangguan kehidupan masyarakat.</p>
-              <p class="mt-4 text-[15px] leading-relaxed">Di Indonesia, karhutla sebagian besar dipicu oleh aktivitas manusia, seperti pembukaan lahan dengan cara membakar, dan diperparah oleh musim kemarau panjang, El Niño, serta kondisi gambut yang kering.</p>
+              <p class="border-l-4 border-merah pl-4 py-3 font-bold text-[15px] leading-snug">Karhutla: ancaman nyata
+                bagi lingkungan, ekonomi, dan kehidupan.</p>
+              <p class="mt-6 text-[15px] leading-relaxed">Karhutla (kebakaran hutan dan lahan) adalah peristiwa
+                terbakarnya hutan dan/atau lahan, termasuk lahan gambut, yang menyebabkan kerusakan lingkungan, kerugian
+                ekonomi, serta gangguan kehidupan masyarakat.</p>
+              <p class="mt-4 text-[15px] leading-relaxed">Di Indonesia, karhutla sebagian besar dipicu oleh aktivitas
+                manusia, seperti pembukaan lahan dengan cara membakar, dan diperparah oleh musim kemarau panjang, El
+                Niño, serta kondisi gambut yang kering.</p>
             </div>
           </div>
         </div>
@@ -163,8 +380,6 @@
       <section class="bg-navy">
         <div class="max-w-5xl mx-auto px-4 py-14">
           <h2 class="judul text-[36px] sm:text-5xl">Peringatan <span class="text-merah">Dini</span></h2>
-          <p class="mt-3 text-kabut text-sm max-w-xl">Titik panas satelit (MODIS &amp; VIIRS) per zona rawan, dengan jarak ke lokasi kamu.</p>
-
           <div class="mt-6 border-t-4 border-merah">
             <div id="ewsMap"></div>
           </div>
@@ -172,8 +387,10 @@
           <div class="mt-6 grid md:grid-cols-2 gap-6 items-start">
             <div class="bg-panel p-5 border-t-4 border-merah space-y-5">
               <div>
-                <label for="ewsZoneSelect" class="block text-[11px] font-bold uppercase text-kabut mb-2">Zona pemantauan</label>
-                <select id="ewsZoneSelect" onchange="updateEwsZoneDetails()" class="w-full bg-panel2 text-white text-sm font-semibold px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah">
+                <label for="ewsZoneSelect" class="block text-[11px] font-bold uppercase text-kabut mb-2">Zona
+                  pemantauan</label>
+                <select id="ewsZoneSelect" onchange="updateEwsZoneDetails()"
+                  class="w-full bg-panel2 text-white text-sm font-semibold px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah">
                   <option value="riau">Riau — Bengkalis &amp; Pelalawan</option>
                   <option value="kalteng" selected>Kalimantan Tengah — Pulang Pisau</option>
                   <option value="sumsel">Sumatera Selatan — OKI</option>
@@ -183,14 +400,22 @@
               <div>
                 <span id="ewsZoneTitle" class="judul text-2xl block">Kalimantan Tengah</span>
                 <span id="ewsCoord" class="text-xs text-kabut block mt-1"></span>
-                <span id="ewsBadgeConfidence" class="inline-block mt-3 px-3 py-1 text-[11px] font-extrabold uppercase bg-merah text-white"></span>
+                <span id="ewsBadgeConfidence"
+                  class="inline-block mt-3 px-3 py-1 text-[11px] font-extrabold uppercase bg-merah text-white"></span>
               </div>
               <div class="grid grid-cols-3 gap-3 text-center">
-                <div class="bg-panel2 p-3"><span class="text-[10px] font-bold uppercase text-kabut block">Hotspot</span><span id="ewsHotspotCount" class="judul text-xl text-merah block mt-1">4</span></div>
-                <div class="bg-panel2 p-3"><span class="text-[10px] font-bold uppercase text-kabut block">Suhu</span><span id="ewsTemp" class="judul text-xl block mt-1">42°C</span></div>
-                <div class="bg-panel2 p-3"><span class="text-[10px] font-bold uppercase text-kabut block">Lembap</span><span id="ewsHumidity" class="judul text-xl block mt-1">31%</span></div>
+                <div class="bg-panel2 p-3"><span
+                    class="text-[10px] font-bold uppercase text-kabut block">Hotspot</span><span id="ewsHotspotCount"
+                    class="judul text-xl text-merah block mt-1">4</span></div>
+                <div class="bg-panel2 p-3"><span
+                    class="text-[10px] font-bold uppercase text-kabut block">Suhu</span><span id="ewsTemp"
+                    class="judul text-xl block mt-1">42°C</span></div>
+                <div class="bg-panel2 p-3"><span
+                    class="text-[10px] font-bold uppercase text-kabut block">Lembap</span><span id="ewsHumidity"
+                    class="judul text-xl block mt-1">31%</span></div>
               </div>
-              <button onclick="triggerSimulasiHotspot()" class="tombol tombol-kecil w-full">Hitung jarak ke titik panas</button>
+              <button onclick="triggerSimulasiHotspot()" class="tombol tombol-kecil w-full">Hitung jarak ke titik
+                panas</button>
             </div>
 
             <div class="space-y-6">
@@ -198,11 +423,14 @@
                 <h3 class="judul text-xl">Peringatan Terkirim</h3>
                 <div id="ewsAlertFeed" class="mt-4 space-y-3 max-h-60 overflow-y-auto no-scrollbar">
                   <div class="bg-panel2 border-l-4 border-merah p-3.5 text-sm">
-                    <div class="flex justify-between text-[11px] font-bold text-merah uppercase"><span>Bot &amp; SMS</span><span class="text-kabut">10 menit lalu</span></div>
-                    <p class="mt-1.5 font-semibold">Satelit VIIRS mendeteksi 4 hotspot di Pulang Pisau, 14,2 km dari Posko Utama.</p>
+                    <div class="flex justify-between text-[11px] font-bold text-merah uppercase"><span>Bot &amp;
+                        SMS</span><span class="text-kabut">10 menit lalu</span></div>
+                    <p class="mt-1.5 font-semibold">Satelit VIIRS mendeteksi 4 hotspot di Pulang Pisau, 14,2 km dari
+                      Posko Utama.</p>
                   </div>
                   <div class="bg-panel2 border-l-4 border-koral p-3.5 text-sm">
-                    <div class="flex justify-between text-[11px] font-bold text-koral uppercase"><span>Siaga dini</span><span class="text-kabut">1 jam lalu</span></div>
+                    <div class="flex justify-between text-[11px] font-bold text-koral uppercase"><span>Siaga
+                        dini</span><span class="text-kabut">1 jam lalu</span></div>
                     <p class="mt-1.5 font-semibold">Suhu gambut di Bengkalis (Riau) naik. Regu darat disiagakan.</p>
                   </div>
                 </div>
@@ -211,12 +439,15 @@
               <form onsubmit="handleEwsSubscribe(event)" class="bg-panel p-5 border-t-4 border-merah space-y-4">
                 <h3 class="judul text-xl">Notifikasi Zona Saya</h3>
                 <div>
-                  <label for="ewsPhoneInput" class="block text-[11px] font-bold uppercase text-kabut mb-2">WhatsApp / Telegram</label>
-                  <input type="text" id="ewsPhoneInput" required maxlength="20" placeholder="081234567890" class="w-full bg-panel2 text-white text-sm px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah placeholder:text-[#5c6b7a]">
+                  <label for="ewsPhoneInput" class="block text-[11px] font-bold uppercase text-kabut mb-2">WhatsApp /
+                    Telegram</label>
+                  <input type="text" id="ewsPhoneInput" required maxlength="20" placeholder="081234567890"
+                    class="w-full bg-panel2 text-white text-sm px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah placeholder:text-[#5c6b7a]">
                 </div>
                 <div>
                   <label for="ewsRoleInput" class="block text-[11px] font-bold uppercase text-kabut mb-2">Peran</label>
-                  <select id="ewsRoleInput" class="w-full bg-panel2 text-white text-sm px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah">
+                  <select id="ewsRoleInput"
+                    class="w-full bg-panel2 text-white text-sm px-4 py-3 border-2 border-[#2a3a4a] focus:outline-none focus:border-merah">
                     <option value="Relawan Pemadam">Relawan / Regu Pemadam (MPA)</option>
                     <option value="Warga Lokal">Warga zona rawan</option>
                     <option value="Pemerhati Lingkungan">Pemerhati lingkungan / akademisi</option>
@@ -234,7 +465,8 @@
     <div id="view-kas" class="view">
       <section class="bg-navy">
         <div class="max-w-5xl mx-auto px-4 pt-12 pb-16">
-          <h1 class="judul text-[44px] sm:text-6xl max-w-md">Buku Kas <span class="text-merah">Publik Digital</span></h1>
+          <h1 class="judul text-[44px] sm:text-6xl max-w-md">Buku Kas <span class="text-merah">Publik Digital</span>
+          </h1>
 
           <div class="mt-8 grid md:grid-cols-3 gap-4">
             <div class="bg-panel border-t-[5px] border-merah px-6 py-4">
@@ -338,9 +570,12 @@
 
                 <div>
                   <label for="lokasiLaporan" class="lbl">Lokasi</label>
-                  <input type="text" id="lokasiLaporan" required maxlength="200" oninput="kosongkanKoordinat()" placeholder="Desa, kecamatan, kabupaten" class="isian">
+                  <input type="text" id="lokasiLaporan" required maxlength="200" oninput="kosongkanKoordinat()"
+                    placeholder="Desa, kecamatan, kabupaten" class="isian">
                   <div class="flex items-center gap-3 mt-2">
-                    <button type="button" onclick="dapatkanGeotagGPS()" class="text-xs font-extrabold uppercase underline decoration-merah decoration-2 underline-offset-4 hover:text-merah">Ambil lokasi GPS</button>
+                    <button type="button" onclick="dapatkanGeotagGPS()"
+                      class="text-xs font-extrabold uppercase underline decoration-merah decoration-2 underline-offset-4 hover:text-merah">Ambil
+                      lokasi GPS</button>
                     <span id="geoStatusText" class="text-xs text-[#6b7580]"></span>
                   </div>
                 </div>
@@ -352,7 +587,8 @@
 
                 <div>
                   <label for="ceritaLaporan" class="lbl">Jelaskan aspirasi Anda</label>
-                  <textarea id="ceritaLaporan" rows="7" required minlength="10" maxlength="2000" placeholder="Tulis laporan kamu di sini" class="isian"></textarea>
+                  <textarea id="ceritaLaporan" rows="7" required minlength="10" maxlength="2000"
+                    placeholder="Tulis laporan kamu di sini" class="isian"></textarea>
                 </div>
 
                 <button type="submit" class="tombol">Kirim Laporan</button>
@@ -387,7 +623,8 @@
     </div>
   </footer>
 
-  <div id="toast" role="status" class="fixed bottom-5 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 bg-merah text-white px-5 py-4 text-sm font-bold shadow-2xl hidden">
+  <div id="toast" role="status"
+    class="fixed bottom-5 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 bg-merah text-white px-5 py-4 text-sm font-bold shadow-2xl hidden">
     <span id="toastMsg"></span>
   </div>
 
