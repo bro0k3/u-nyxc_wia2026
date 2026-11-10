@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel Admin — FireWatch</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Palet yang sama dengan index.html supaya tampilannya serasi.
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            abu: '#EDEFEA', kertas: '#FAFAF7', hutan: '#0B3D2E', bara: '#381208',
+            arang: '#232622', gambut: '#625A4F', garis: '#CDD2C8',
+          },
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .isian {
+      width: 100%;
+      padding: .55rem .75rem;
+      background: #EDEFEA;
+      border: 1px solid #CDD2C8;
+      font-size: .8125rem;
+      color: #232622;
+    }
+
+    .isian:focus {
+      outline: 2px solid #0B3D2E;
+      outline-offset: 1px;
+    }
+
+    .label {
+      display: block;
+      font-size: .75rem;
+      font-weight: 600;
+      color: #625A4F;
+      margin-bottom: .25rem;
+    }
+
+    .tombol {
+      padding: .45rem .9rem;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid #0B3D2E;
+      background: #0B3D2E;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .tombol:hover {
+      background: #381208;
+      border-color: #381208;
+    }
+
+    .tombol:focus-visible {
+      outline: 2px solid #381208;
+      outline-offset: 2px;
+    }
+
+    .tombol.kosong {
+      background: transparent;
+      color: #0B3D2E;
+    }
+
+    .tombol.kosong:hover {
+      background: #EDEFEA;
+    }
+
+    .tombol.bahaya {
+      background: transparent;
+      color: #991b1b;
+      border-color: #991b1b;
+    }
+
+    .tombol.bahaya:hover {
+      background: #fee2e2;
+    }
+
+    .tab {
+      padding: .6rem 1rem;
+      font-size: .8125rem;
+      font-weight: 600;
+      color: #625A4F;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab[aria-selected="true"] {
+      color: #0B3D2E;
+      border-bottom-color: #0B3D2E;
+    }
+
+    th {
+      text-align: left;
+      font-weight: 600;
+      color: #625A4F;
+      font-size: .75rem;
+      padding: .5rem .75rem;
+    }
+
+    td {
+      padding: .6rem .75rem;
+      vertical-align: top;
+    }
+  </style>
+</head>
+
+<body class="bg-abu text-arang font-sans antialiased min-h-screen">
+
+  <!-- ============ LOGIN ============ -->
+  <main id="viewLogin" class="hidden min-h-screen flex items-center justify-center px-4">
+    <form id="formLogin" class="w-full max-w-sm bg-kertas border border-garis p-8 space-y-5" autocomplete="on">
+      <div>
+        <h1 class="text-2xl font-semibold">Masuk sebagai admin</h1>
+        <p class="text-xs text-gambut mt-1">Hanya admin yang bisa memverifikasi laporan dan mengubah data keuangan.</p>
+      </div>
+      <div>
+        <label class="label" for="loginUser">Username</label>
+        <input id="loginUser" class="isian" required autocomplete="username" maxlength="50">
+      </div>
+      <div>
+        <label class="label" for="loginPass">Kata sandi</label>
+        <input id="loginPass" type="password" class="isian" required autocomplete="current-password" maxlength="200">
+      </div>
+      <p id="loginGalat" class="text-xs text-red-800 hidden" role="alert"></p>
+      <button class="tombol w-full py-2.5">Masuk</button>
+      <a href="/" class="block text-center text-xs text-gambut hover:text-hutan">Kembali ke situs</a>
+    </form>
+  </main>
+
+  <!-- ============ PANEL ============ -->
+  <div id="viewPanel" class="hidden">
+    <header class="bg-kertas border-b border-garis">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-baseline gap-3">
+          <span class="font-semibold text-hutan">FireWatch</span>
+          <span class="text-xs text-gambut">Panel admin</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="text-gambut">Masuk: <strong id="namaAdmin" class="text-arang"></strong></span>
+          <a href="/" class="text-hutan hover:underline">Lihat situs</a>
+          <button id="btnKeluar" class="tombol kosong">Keluar</button>
+        </div>
+      </div>
+      <nav class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto" role="tablist">
+        <button class="tab" role="tab" data-tab="laporan" aria-selected="true">Laporan warga</button>
+        <button class="tab" role="tab" data-tab="keuangan" aria-selected="false">Data keuangan</button>
+        <button class="tab" role="tab" data-tab="langganan" aria-selected="false">Pendaftar notifikasi</button>
+      </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+      <!-- ---- Laporan ---- -->
+      <section id="tab-laporan" class="space-y-5">
+        <div id="filterLaporan" class="flex flex-wrap gap-2"></div>
+        <div id="daftarLaporan" class="space-y-4"></div>
+      </section>
+
+      <!-- ---- Keuangan ---- -->
+      <section id="tab-keuangan" class="hidden space-y-10">
+
+        <div class="bg-kertas border border-garis p-6 space-y-4">
+          <h2 class="text-lg font-semibold">Ringkasan Buku Kas</h2>
+          <form id="formRingkasan" class="grid sm:grid-cols-4 gap-4 items-end">
+            <div><label class="label" for="r_pendapatan">Pendapatan (triliun Rp)</label>
+              <input id="r_pendapatan" type="number" step="any" min="0" class="isian" required>
+            </div>
+            <div><label class="label" for="r_belanja">Belanja (triliun Rp)</label>
+              <input id="r_belanja" type="number" step="any" min="0" class="isian" required>
+            </div>
+            <div><label class="label" for="r_silpa">SILPA (triliun Rp)</label>
+              <input id="r_silpa" type="number" step="any" min="0" class="isian" required>
+            </div>
+            <button class="tombol py-2.5">Simpan ringkasan</button>
+          </form>
+        </div>
+
+        <div class="bg-kertas border border-garis p-6 space-y-5">
+          <h2 class="text-lg font-semibold">Penyerapan anggaran per pos</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[640px]">
+              <thead>
+                <tr class="border-b border-garis">
+                  <th>Pos</th>
+                  <th>Kelompok</th>
+                  <th>Pagu (M)</th>
+                  <th>Realisasi (M)</th>
+                  <th>Serap</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabelSektor" class="divide-y divide-garis"></tbody>
+            </table>
+          </div>
+          <form id="formSektor" class="border-t border-garis pt-5 grid sm:grid-cols-6 gap-4 items-end">
+            <input type="hidden" id="s_id">
+            <div class="sm:col-span-3"><label class="label" for="s_nama">Nama pos</label>
+              <input id="s_nama" class="isian" required maxlength="120">
+            </div>
+            <div class="sm:col-span-3"><label class="label" for="s_deskripsi">Keterangan singkat</label>
+              <input id="s_deskripsi" class="isian" required maxlength="150"
+                placeholder="mis. Pengadaan Pompa Air & APD">
+            </div>
+            <div><label class="label" for="s_kelompok">Kelompok grafik</label>
+              <select id="s_kelompok" class="isian">
+                <option value="pemadaman">Pemadaman</option>
+                <option value="restorasi">Restorasi</option>
+              </select>
+            </div>
+            <div><label class="label" for="s_pagu">Pagu (miliar Rp)</label>
+              <input id="s_pagu" type="number" step="any" min="0.01" class="isian" required>
+            </div>
+            <div><label class="label" for="s_realisasi">Realisasi (miliar Rp)</label>
+              <input id="s_realisasi" type="number" step="any" min="0" class="isian" required>
+            </div>
+            <div><label class="label" for="s_warna">Warna grafik</label>
+              <input id="s_warna" type="color" value="#0B3D2E" class="isian"
+                style="padding:.15rem .25rem;height:2.4rem">
+            </div>
+            <div class="sm:col-span-2 flex gap-2">
+              <button class="tombol py-2.5" id="btnSimpanSektor">Tambah pos</button>
+              <button type="button" class="tombol kosong py-2.5 hidden" id="btnBatalSektor">Batal</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-kertas border border-garis p-6 space-y-5">
+          <h2 class="text-lg font-semibold">Rincian uang masuk &amp; keluar</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[560px]">
+              <thead>
+                <tr class="border-b border-garis">
+                  <th>Jenis</th>
+                  <th>Pos</th>
+                  <th>Sumber</th>
+                  <th>Nilai</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabelPos" class="divide-y divide-garis"></tbody>
+            </table>
+          </div>
+          <form id="formPos" class="border-t border-garis pt-5 grid sm:grid-cols-5 gap-4 items-end">
+            <input type="hidden" id="p_id">
+            <div><label class="label" for="p_jenis">Jenis</label>
+              <select id="p_jenis" class="isian">
+                <option value="masuk">Uang masuk</option>
+                <option value="keluar">Uang keluar</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2"><label class="label" for="p_nama">Nama pos</label>
+              <input id="p_nama" class="isian" required maxlength="120">
+            </div>
+            <div><label class="label" for="p_sumber">Sumber data</label>
+              <input id="p_sumber" class="isian" required maxlength="120" value="LKPP 2025 Audited">
+            </div>
+            <div><label class="label" for="p_nilai">Nilai (triliun Rp)</label>
+              <input id="p_nilai" type="number" step="any" min="0" class="isian" required>
+            </div>
+            <div class="sm:col-span-5 flex gap-2">
+              <button class="tombol py-2.5" id="btnSimpanPos">Tambah pos</button>
+              <button type="button" class="tombol kosong py-2.5 hidden" id="btnBatalPos">Batal</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ---- Langganan ---- -->
+      <section id="tab-langganan" class="hidden space-y-4">
+        <p class="text-xs text-gambut">Berisi nomor HP warga dan relawan. Data ini tidak ditampilkan di situs publik.
+        </p>
+        <div class="bg-kertas border border-garis overflow-x-auto">
+          <table class="w-full text-sm min-w-[520px]">
+            <thead>
+              <tr class="border-b border-garis">
+                <th>Nomor</th>
+                <th>Peran</th>
+                <th>Zona</th>
+                <th>Terdaftar</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tabelLangganan" class="divide-y divide-garis"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" role="status"
+    class="hidden fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3 text-xs shadow-2xl border border-hutan max-w-xs">
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const waktu = (iso) => iso ? new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
+    const angka = (n) => Number(n).toLocaleString('id-ID', { maximumFractionDigits: 3 });
+
+    let toastTimer;
+    function toast(pesan) {
+      const el = $('toast');
+      el.textContent = pesan;
+      el.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    // Semua permintaan ke server lewat satu fungsi ini. Header X-Requested-With wajib
+    // untuk setiap permintaan admin (perlindungan CSRF di server).
+    async function api(url, { method = 'GET', body } = {}) {
+      const res = await fetch(url, {
+        method,
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'FireWatch' },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401 && url !== '/api/admin/login') {
+        tampilkanLogin();
+        throw new Error('Sesi berakhir. Silakan masuk lagi.');
+      }
+      if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan.');
+      return data;
+    }
+
+    // Bungkus aksi: kalau gagal, pesan error dari server muncul sebagai toast.
+    const aman = (fn) => async (...args) => {
+      try { await fn(...args); } catch (e) { toast(e.message); }
+    };
+
+    // ------------------------------------------------------------- login / sesi
+    function tampilkanLogin() {
+      $('viewPanel').classList.add('hidden');
+      $('viewLogin').classList.remove('hidden');
+    }
+
+    async function tampilkanPanel(username) {
+      $('namaAdmin').textContent = username;
+      $('viewLogin').classList.add('hidden');
+      $('viewPanel').classList.remove('hidden');
+      pilihTab('laporan');
+    }
+
+    $('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('loginGalat').classList.add('hidden');
+      try {
+        const d = await api('/api/admin/login', {
+          method: 'POST', body: { username: $('loginUser').value, password: $('loginPass').value },
+        });
+        $('loginPass').value = '';
+        tampilkanPanel(d.username);
+      } catch (err) {
+        $('loginGalat').textContent = err.message;
+        $('loginGalat').classList.remove('hidden');
+      }
+    });
+
+    $('btnKeluar').addEventListener('click', aman(async () => {
+      await api('/api/admin/logout', { method: 'POST', body: {} });
+      tampilkanLogin();
+    }));
+
+    // --------------------------------------------------------------------- tab
+    function pilihTab(nama) {
+      document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', t.dataset.tab === nama));
+      ['laporan', 'keuangan', 'langganan'].forEach((n) => $('tab-' + n).classList.toggle('hidden', n !== nama));
+      const muat = { laporan: muatLaporan, keuangan: muatKeuangan, langganan: muatLangganan }[nama];
+      aman(muat)();
+    }
+    document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => pilihTab(t.dataset.tab)));
+
+    // ---------------------------------------------------------- laporan warga
+    let filterStatus = 'menunggu';
+    const LABEL_STATUS = { menunggu: 'Menunggu', terverifikasi: 'Terverifikasi', ditolak: 'Ditolak', semua: 'Semua' };
+    const WARNA_STATUS = {
+      menunggu: 'bg-amber-100 text-amber-900 border-amber-300',
+      terverifikasi: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+      ditolak: 'bg-red-100 text-red-900 border-red-300',
+    };
+
+    async function muatLaporan() {
+      const d = await api('/api/admin/laporan?status=' + filterStatus);
+      const total = d.jumlah.menunggu + d.jumlah.terverifikasi + d.jumlah.ditolak;
+      $('filterLaporan').innerHTML = ['menunggu', 'terverifikasi', 'ditolak', 'semua'].map((s) => {
+        const n = s === 'semua' ? total : d.jumlah[s];
+        const aktif = s === filterStatus;
+        return `<button class="tombol ${aktif ? '' : 'kosong'}" data-filter="${s}">${LABEL_STATUS[s]} (${n})</button>`;
+      }).join('');
+      $('daftarLaporan').innerHTML = d.laporan.length
+        ? d.laporan.map(kartuLaporan).join('')
+        : '<p class="text-sm text-gambut bg-kertas border border-garis p-6">Tidak ada laporan di kategori ini.</p>';
+    }
+
+    function kartuLaporan(r) {
+      const peta = r.lat != null
+        ? ` · <a class="text-hutan underline" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${Number(r.lat)}&mlon=${Number(r.lng)}#map=15/${Number(r.lat)}/${Number(r.lng)}">Lihat di peta</a>`
+        : '';
+      const foto = r.foto_url
+        ? `<a href="${esc(r.foto_url)}" target="_blank" rel="noopener"><img src="${esc(r.foto_url)}" alt="Foto laporan" class="h-28 w-auto border border-garis"></a>`
+        : '';
+      const tinjau = r.ditinjau_oleh ? `<span class="text-gambut">Ditinjau oleh ${esc(r.ditinjau_oleh)}, ${esc(waktu(r.ditinjau_pada))}</span>` : '';
+      const aksi = {
+        menunggu: [['terverifikasi', 'Verifikasi', ''], ['ditolak', 'Tolak', 'bahaya']],
+        terverifikasi: [['menunggu', 'Kembalikan ke menunggu', 'kosong'], ['ditolak', 'Tolak', 'bahaya']],
+        ditolak: [['terverifikasi', 'Verifikasi', ''], ['menunggu', 'Kembalikan ke menunggu', 'kosong']],
+      }[r.status].map(([s, label, gaya]) =>
+        `<button class="tombol ${gaya}" data-aksi="status" data-id="${r.id}" data-status="${s}">${label}</button>`).join('');
+      return `
+        <article class="bg-kertas border border-garis p-5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="px-2.5 py-1 border font-semibold ${WARNA_STATUS[r.status]}">${LABEL_STATUS[r.status]}</span>
+            <span class="text-gambut">${esc(r.jenis)} · dikirim ${esc(waktu(r.dibuat_pada))}</span>
+          </div>
+          <p class="text-sm leading-relaxed whitespace-pre-wrap">${esc(r.deskripsi)}</p>
+          <p class="text-xs text-gambut">Lokasi: ${esc(r.lokasi)}${peta}</p>
+          ${foto}
+          <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-garis text-xs">
+            ${aksi}
+            <button class="tombol bahaya" data-aksi="hapus" data-id="${r.id}">Hapus</button>
+            <span class="ml-auto">${tinjau}</span>
+          </div>
+        </article>`;
+    }
+
+    $('filterLaporan').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-filter]');
+      if (b) { filterStatus = b.dataset.filter; aman(muatLaporan)(); }
+    });
+
+    $('daftarLaporan').addEventListener('click', aman(async (e) => {
+      const b = e.target.closest('[data-aksi]');
+      if (!b) return;
+      if (b.dataset.aksi === 'status') {
+        await api(`/api/admin/laporan/${b.dataset.id}/status`, { method: 'PATCH', body: { status: b.dataset.status } });
+        toast('Status laporan diperbarui.');
+      } else if (b.dataset.aksi === 'hapus') {
+        if (!confirm('Hapus laporan ini beserta fotonya? Tindakan ini tidak bisa dibatalkan.')) return;
+        await api(`/api/admin/laporan/${b.dataset.id}`, { method: 'DELETE' });
+        toast('Laporan dihapus.');
+      }
+      await muatLaporan();
+    }));
+
+    // ----------------------------------------------------------- data keuangan
+    let anggaran = null;
+
+    async function muatKeuangan() {
+      anggaran = await api('/api/anggaran');
+      gambarKeuangan();
+    }
+
+    function gambarKeuangan() {
+      const n = anggaran.ringkasan_nilai;
+      $('r_pendapatan').value = n.pendapatan_triliun;
+      $('r_belanja').value = n.belanja_triliun;
+      $('r_silpa').value = n.silpa_triliun;
+
+      $('tabelSektor').innerHTML = anggaran.sektor_penyerapan.map((s) => `
+        <tr>
+          <td><span class="inline-block w-2.5 h-2.5 mr-2 align-middle" style="background:${esc(s.warna)}"></span>${esc(s.nama)}<div class="text-xs text-gambut">${esc(s.deskripsi)}</div></td>
+          <td>${esc(s.kelompok)}</td><td>${angka(s.pagu_miliar)}</td><td>${angka(s.realisasi_miliar)}</td><td>${s.persentase}%</td>
+          <td class="whitespace-nowrap space-x-1">
+            <button class="tombol kosong" data-aksi="ubah-sektor" data-id="${esc(s.id)}">Ubah</button>
+            <button class="tombol bahaya" data-aksi="hapus-sektor" data-id="${esc(s.id)}">Hapus</button></td>
+        </tr>`).join('') || '<tr><td colspan="6" class="text-gambut">Belum ada pos.</td></tr>';
+
+      const semua = [
+        ...anggaran.pos_kas.masuk.map((p) => ({ ...p, jenis: 'masuk' })),
+        ...anggaran.pos_kas.keluar.map((p) => ({ ...p, jenis: 'keluar' })),
+      ];
+      $('tabelPos').innerHTML = semua.map((p) => `
+        <tr>
+          <td>${p.jenis === 'masuk' ? 'Uang masuk' : 'Uang keluar'}</td><td>${esc(p.nama)}</td>
+          <td>${esc(p.sumber)}</td><td>${esc(p.nilai)}</td>
+          <td class="whitespace-nowrap space-x-1">
+            <button class="tombol kosong" data-aksi="ubah-pos" data-id="${p.id}" data-jenis="${p.jenis}">Ubah</button>
+            <button class="tombol bahaya" data-aksi="hapus-pos" data-id="${p.id}">Hapus</button></td>
+        </tr>`).join('') || '<tr><td colspan="5" class="text-gambut">Belum ada pos.</td></tr>';
+    }
+
+    $('formRingkasan').addEventListener('submit', aman(async (e) => {
+      e.preventDefault();
+      anggaran = await api('/api/admin/ringkasan', {
+        method: 'PUT', body: {
+          pendapatan_triliun: parseFloat($('r_pendapatan').value),
+          belanja_triliun: parseFloat($('r_belanja').value),
+          silpa_triliun: parseFloat($('r_silpa').value),
+        }
+      });
+      gambarKeuangan();
+      toast('Ringkasan disimpan.');
+    }));
+
+    // -- pos penyerapan (tambah / ubah / hapus)
+    function resetFormSektor() {
+      $('formSektor').reset();
+      $('s_id').value = '';
+      $('s_warna').value = '#0B3D2E';
+      $('btnSimpanSektor').textContent = 'Tambah pos';
+      $('btnBatalSektor').classList.add('hidden');
+    }
+    $('btnBatalSektor').addEventListener('click', resetFormSektor);
+
+    $('formSektor').addEventListener('submit', aman(async (e) => {
+      e.preventDefault();
+      const id = $('s_id').value;
+      const body = {
+        nama: $('s_nama').value, deskripsi: $('s_deskripsi').value, kelompok: $('s_kelompok').value,
+        pagu_miliar: parseFloat($('s_pagu').value), realisasi_miliar: parseFloat($('s_realisasi').value),
+        warna: $('s_warna').value,
+      };
+      anggaran = await api(id ? `/api/admin/sektor/${encodeURIComponent(id)}` : '/api/admin/sektor',
+        { method: id ? 'PUT' : 'POST', body });
+      gambarKeuangan();
+      resetFormSektor();
+      toast(id ? 'Pos diperbarui.' : 'Pos ditambahkan.');
+    }));
+
+    $('tabelSektor').addEventListener('click', aman(async (e) => {
+      const b = e.target.closest('[data-aksi]');
+      if (!b) return;
+      if (b.dataset.aksi === 'ubah-sektor') {
+        const s = anggaran.sektor_penyerapan.find((x) => x.id === b.dataset.id);
+        $('s_id').value = s.id; $('s_nama').value = s.nama; $('s_deskripsi').value = s.deskripsi;
+        $('s_kelompok').value = s.kelompok; $('s_pagu').value = s.pagu_miliar;
+        $('s_realisasi').value = s.realisasi_miliar; $('s_warna').value = s.warna;
+        $('btnSimpanSektor').textContent = 'Simpan perubahan';
+        $('btnBatalSektor').classList.remove('hidden');
+        $('s_nama').focus();
+      } else if (b.dataset.aksi === 'hapus-sektor') {
+        if (!confirm('Hapus pos ini dari dashboard publik?')) return;
+        anggaran = await api(`/api/admin/sektor/${encodeURIComponent(b.dataset.id)}`, { method: 'DELETE' });
+        gambarKeuangan();
+        toast('Pos dihapus.');
+      }
+    }));
+
+    // -- pos uang masuk / keluar
+    function resetFormPos() {
+      $('formPos').reset();
+      $('p_id').value = '';
+      $('btnSimpanPos').textContent = 'Tambah pos';
+      $('btnBatalPos').classList.add('hidden');
+    }
+    $('btnBatalPos').addEventListener('click', resetFormPos);
+
+    $('formPos').addEventListener('submit', aman(async (e) => {
+      e.preventDefault();
+      const id = $('p_id').value;
+      const body = {
+        jenis: $('p_jenis').value, nama: $('p_nama').value, sumber: $('p_sumber').value,
+        nilai_triliun: parseFloat($('p_nilai').value),
+      };
+      anggaran = await api(id ? `/api/admin/pos-kas/${id}` : '/api/admin/pos-kas', { method: id ? 'PUT' : 'POST', body });
+      gambarKeuangan();
+      resetFormPos();
+      toast(id ? 'Pos diperbarui.' : 'Pos ditambahkan.');
+    }));
+
+    $('tabelPos').addEventListener('click', aman(async (e) => {
+      const b = e.target.closest('[data-aksi]');
+      if (!b) return;
+      if (b.dataset.aksi === 'ubah-pos') {
+        const p = anggaran.pos_kas[b.dataset.jenis].find((x) => String(x.id) === b.dataset.id);
+        $('p_id').value = p.id; $('p_jenis').value = b.dataset.jenis; $('p_nama').value = p.nama;
+        $('p_sumber').value = p.sumber; $('p_nilai').value = p.nilai_triliun;
+        $('btnSimpanPos').textContent = 'Simpan perubahan';
+        $('btnBatalPos').classList.remove('hidden');
+        $('p_nama').focus();
+      } else if (b.dataset.aksi === 'hapus-pos') {
+        if (!confirm('Hapus pos ini dari Buku Kas publik?')) return;
+        anggaran = await api(`/api/admin/pos-kas/${b.dataset.id}`, { method: 'DELETE' });
+        gambarKeuangan();
+        toast('Pos dihapus.');
+      }
+    }));
+
+    // ------------------------------------------------------ pendaftar notifikasi
+    const NAMA_ZONA = { riau: 'Riau', kalteng: 'Kalimantan Tengah', sumsel: 'Sumatera Selatan', kalbar: 'Kalimantan Barat' };
+
+    async function muatLangganan() {
+      const d = await api('/api/admin/langganan');
+      $('tabelLangganan').innerHTML = d.langganan.map((l) => `
+        <tr><td>${esc(l.kontak)}</td><td>${esc(l.peran)}</td><td>${esc(NAMA_ZONA[l.zona] || l.zona)}</td>
+        <td>${esc(waktu(l.dibuat_pada))}</td>
+        <td><button class="tombol bahaya" data-id="${l.id}">Hapus</button></td></tr>`).join('')
+        || '<tr><td colspan="5" class="text-gambut">Belum ada pendaftar.</td></tr>';
+    }
+
+    $('tabelLangganan').addEventListener('click', aman(async (e) => {
+      const b = e.target.closest('[data-id]');
+      if (!b || !confirm('Hapus pendaftar ini?')) return;
+      await api(`/api/admin/langganan/${b.dataset.id}`, { method: 'DELETE' });
+      toast('Pendaftar dihapus.');
+      await muatLangganan();
+    }));
+
+    // ---------------------------------------------------------------- mulai
+    (async () => {
+      try {
+        const d = await api('/api/admin/me');
+        d.admin ? tampilkanPanel(d.username) : tampilkanLogin();
+      } catch (e) {
+        tampilkanLogin();
+      }
+    })();
+  </script>
+</body>
+
+</html>

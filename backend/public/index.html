@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FireWatch — Transparansi & Peringatan Dini Karhutla</title>
+
+  <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            abu: '#EDEFEA',       // Latar utama halaman
+            kertas: '#FAFAF7',    // Latar panel/kartu
+            hutan: '#0B3D2E',     // Hijau tua aksen
+            bara: '#381208',      // Cokelat bara arang pekat
+            arang: '#232622',     // Teks utama / Gelap
+            gambut: '#625A4F',    // Teks pendukung / Muted
+            garis: '#CDD2C8',     // Garis pemisah / Fine borders
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Avenir Next"', '"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest: '.25em',
+            luxury: '.15em',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet CSS & JS untuk Peta EWS Interactive -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #EDEFEA;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CDD2C8;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0B3D2E;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .glass-panel {
+      background: rgba(250, 250, 247, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .transition-yonobi {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #ewsMap {
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-abu text-arang font-sans antialiased selection:bg-hutan selection:text-white min-h-screen flex flex-col justify-between">
+
+  <!-- ================= HEADER & NAVBAR ================= -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-garis transition-yonobi">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- Mobile Menu Button -->
+      <button onclick="toggleMobileNav()" class="lg:hidden text-arang p-2 hover:bg-abu rounded">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Menu Navigasi Kiri -->
+      <nav
+        class="hidden lg:flex items-center space-x-8 text-xs font-semibold uppercase tracking-luxury text-gambut font-sans">
+        <a href="#keuangan"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Keuangan
+          & Visualisasi</a>
+        <a href="#lapangan"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Lapangan</a>
+        <a href="#peringatan-dini"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Peringatan
+          Dini (EWS)</a>
+        <a href="#partisipasi"
+          class="hover:text-hutan transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-hutan hover:after:w-full after:transition-all">Partisipasi
+          & Lapor</a>
+      </nav>
+
+      <!-- Logo Center -->
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group" aria-label="FireWatch - Ke Atas Halaman">
+        <img src="pic/logoFW.PNG" alt="Logo FireWatch" width="187" height="240"
+          class="h-9 sm:h-12 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105"
+          onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+        <div class="hidden flex-col items-center">
+          <span
+            class="font-serif text-xl sm:text-3xl font-normal tracking-[0.2em] sm:tracking-[0.25em] text-hutan group-hover:text-bara transition-colors uppercase">
+            FIRE WATCH
+          </span>
+        </div>
+      </a>
+
+      <!-- Search & Link Lapor -->
+      <div class="flex items-center space-x-4 font-sans">
+        <button onclick="openSearchModal()" class="p-2 text-arang hover:text-hutan transition-colors" title="Cari Data">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </button>
+
+        <a href="#lapor"
+          class="hidden sm:inline-flex px-5 py-2.5 bg-bara text-white text-xs font-semibold uppercase tracking-widest hover:bg-hutan transition-yonobi items-center gap-2 border border-bara">
+          <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span>Lapor Titik Api</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobileNav" class="hidden lg:hidden border-b border-garis bg-kertas px-6 py-6 space-y-3 font-sans">
+      <a href="#keuangan" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Keuangan & Visualisasi</a>
+      <a href="#lapangan" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Dokumentasi Lapangan</a>
+      <a href="#peringatan-dini" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">EWS Satelit Hotspot</a>
+      <a href="#partisipasi" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-arang py-2 border-b border-garis">Papan Aspirasi Rakyat</a>
+      <a href="#lapor" onclick="toggleMobileNav()"
+        class="block text-xs uppercase tracking-widest text-hutan font-bold py-2">Lapor Titik Api (Geotagged)</a>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+
+    <!-- ================= HERO SECTION DENGAN VIDEO BACKGROUND ================= -->
+    <section
+      class="relative min-h-[85vh] flex items-center justify-center border-b border-garis overflow-hidden bg-arang text-white font-sans">
+
+      <video autoplay loop muted playsinline
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 filter contrast-125">
+        <source src="/vid/wildfire-forest-fire-free-stock-video-1080-ytshorts.savetube.me.mp4" type="video/mp4">
+      </video>
+
+      <div class="absolute inset-0 bg-gradient-to-t from-bara via-arang/70 to-transparent z-10"></div>
+
+      <div class="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 space-y-8">
+
+        <h1 class="font-sans text-4xl sm:text-6xl lg:text-5xl font-light leading-[1.15] text-white tracking-tight">
+          Setiap rupiah penanganan kebakaran hutan <br class="hidden sm:inline">
+          <span class="italic font-normal text-white">bisa kamu periksa.</span>
+        </h1>
+
+        <p class="text-garis text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-light">
+          Lihat ke mana dana mengalir, buka bukti kerja di lapangan, dan laporkan titik api atau dugaan penyelewengan
+          anggaran secara real-time.
+        </p>
+
+        <div class="pt-4 flex flex-wrap justify-center gap-4">
+          <a href="#keuangan"
+            class="px-8 py-4 bg-kertas/10 backdrop-blur-md text-white border border-garis/50 text-xs font-semibold uppercase tracking-widest hover:bg-kertas hover:text-arang transition-yonobi flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Lihat Buku Kas & Grafik</span>
+          </a>
+          <a href="#lapor"
+            class="px-8 py-4 bg-hutan text-white text-xs font-bold uppercase tracking-widest hover:bg-bara transition-yonobi shadow-md flex items-center gap-2 border border-garis/40">
+            <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+            <span>Lapor Titik Api</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= MODUL 1: KEUANGAN TERBUKA & DASHBOARD JSON ================= -->
+    <section id="keuangan" class="py-20 border-b border-garis max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-sans">
+
+      <div class="space-y-3 mb-12">
+        <h2 class="font-sans text-3xl sm:text-5xl font-semibold text-arang">Sistem Keuangan Terbuka</h2>
+        <p class="text-gambut text-xs sm:text-sm max-w-3xl leading-relaxed font-light">
+          Catatan resmi Laporan Keuangan Pemerintah Pusat Tahun 2025 Audited dari Kementerian Keuangan.
+        </p>
+      </div>
+
+      <!-- Ringkasan Kas (3 KPI Cards) -->
+      <div class="mb-12 space-y-4">
+        <h3 class="font-sans text-2xl font-normal text-arang">Buku Kas Publik Digital (APBN 2025)</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- Pendapatan -->
+          <div class="bg-kertas border border-garis p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-gambut">
+              <span class="text-[10px] font-sans uppercase tracking-widest font-bold">Uang Masuk</span>
+              <i data-lucide="trending-up" class="w-4 h-4 text-emerald-700"></i>
+            </div>
+            <span class="text-xs text-gambut block">Pendapatan Negara</span>
+            <span id="kpiPendapatan" class="font-sans text-4xl font-semibold text-arang block tracking-tight">Rp
+              2.765,13 T</span>
+            <div class="text-[11px] font-sans text-gambut pt-2 border-t border-garis">
+              LKPP 2025 Audited (Target Rp 3.005,13 T)
+            </div>
+          </div>
+
+          <!-- Belanja -->
+          <div class="bg-kertas border border-garis p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-gambut">
+              <span class="text-[10px] font-sans uppercase tracking-widest font-bold">Uang Keluar</span>
+              <i data-lucide="trending-down" class="w-4 h-4 text-hutan"></i>
+            </div>
+            <span class="text-xs text-gambut block">Belanja Negara</span>
+            <span id="kpiBelanja" class="font-sans text-4xl font-semibold text-arang block tracking-tight">Rp 3.435,46
+              T</span>
+            <div class="text-[11px] font-sans text-gambut pt-2 border-t border-garis">
+              LKPP 2025 Audited (Pagu Rp 3.621,31 T)
+            </div>
+          </div>
+
+          <!-- SILPA -->
+          <div class="bg-abu border border-hutan/40 p-6 space-y-2 hover:border-hutan transition-yonobi shadow-2xs">
+            <div class="flex justify-between items-center text-hutan">
+              <span class="text-[10px] font-sans uppercase tracking-widest font-bold">Saldo Sisa</span>
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+            </div>
+            <span class="text-xs text-gambut block">SILPA saat ini</span>
+            <span id="kpiSilpa" class="font-sans text-4xl font-bold text-hutan block tracking-tight">Rp 72,40 T</span>
+            <div class="text-[11px] font-sans text-hutan font-semibold pt-2 border-t border-garis">
+              Sisa Lebih Pembiayaan Anggaran Audited
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DASHBOARD VISUALISASI ANGGARAN INTERAKTIF -->
+      <div class="mb-14 bg-kertas border border-garis p-6 sm:p-8 space-y-6 shadow-2xs">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-garis pb-4 gap-3">
+          <div>
+            <span class="text-[10px] font-sans uppercase tracking-widest text-hutan font-bold block">FITUR INTERAKTIF
+              (JSON LOADED)</span>
+            <h3 class="font-sans text-2xl font-normal text-arang">Dashboard Visualisasi Alokasi & Penyerapan Dana</h3>
+            <p class="text-xs text-gambut font-light mt-0.5">Grafik transparan penanganan karhutla yang terhubung
+              langsung ke file data anggaran.</p>
+          </div>
+          <!-- Filter Sektor -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="switchBudgetChart('all')" id="btnChartAll"
+              class="px-3 py-1.5 bg-hutan text-white font-semibold">Semua Sektor</button>
+            <button onclick="switchBudgetChart('pemadaman')" id="btnChartPemadaman"
+              class="px-3 py-1.5 bg-abu text-arang hover:border-hutan border border-garis">Pemadaman Darurat</button>
+            <button onclick="switchBudgetChart('restorasi')" id="btnChartRestorasi"
+              class="px-3 py-1.5 bg-abu text-arang hover:border-hutan border border-garis">Restorasi Gambut</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <!-- Area Donut Chart -->
+          <div class="lg:col-span-5 flex flex-col items-center justify-center p-4 bg-abu border border-garis">
+            <div class="w-full max-w-[280px] aspect-square">
+              <canvas id="budgetDonutChart"></canvas>
+            </div>
+            <span class="text-[11px] text-gambut mt-3 text-center font-sans">Proporsi Realisasi Pagu Pemadaman &
+              Pemulihan (Triliun Rp)</span>
+          </div>
+
+          <!-- Progress Bar List -->
+          <div id="sectorProgressContainer" class="lg:col-span-7 space-y-5">
+            <!-- Diisi secara dinamis melalui JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Rincian Kas Dua Kolom -->
+      <div class="space-y-6">
+
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-garis pb-3 gap-4">
+          <h3 class="font-sans text-2xl font-normal text-arang">Pos Transaksi LKPP 2025</h3>
+          <div class="relative w-full sm:w-72">
+            <input type="text" oninput="filterKas(this.value)" placeholder="Cari pos pendapatan / belanja..."
+              class="w-full px-3 py-2 bg-kertas border border-garis text-xs focus:outline-none focus:border-hutan font-sans">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-gambut absolute right-3 top-2.5"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          <!-- Uang Masuk -->
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="flex justify-between items-center border-b border-garis pb-3">
+              <h4 class="font-sans text-xl font-normal text-arang flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-700"></span>
+                <span>Rincian Uang Masuk</span>
+              </h4>
+              <span class="text-[10px] font-sans text-gambut uppercase">Audited</span>
+            </div>
+
+            <ul id="listMasuk" class="divide-y divide-garis text-xs">
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Pendapatan Perpajakan</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 2.218,17 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">PNBP (Penerimaan Negara Bukan Pajak)</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 541,53 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Penerimaan Hibah</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 5,43 T</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Uang Keluar -->
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="flex justify-between items-center border-b border-garis pb-3">
+              <h4 class="font-sans text-xl font-normal text-arang flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-hutan"></span>
+                <span>Rincian Uang Keluar</span>
+              </h4>
+              <span class="text-[10px] font-sans text-gambut uppercase">Audited</span>
+            </div>
+
+            <ul id="listKeluar" class="divide-y divide-garis text-xs">
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Belanja Pemerintah Pusat</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 2.586,42 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Transfer ke Daerah</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 849,04 T</span>
+              </li>
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">Pembiayaan Neto</span>
+                  <span class="text-[10px] text-gambut font-sans">LKPP 2025 Audited</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">Rp 742,73 T</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========== DOKUMENTASI LAPANGAN ========== -->
+    <section id="lapangan"
+      class="relative min-h-[90vh] flex flex-col justify-center border-b border-garis overflow-hidden bg-arang text-white py-20 font-sans">
+
+      <video autoplay loop muted playsinline
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 filter contrast-125">
+        <source src="/vid/rekaman-video-dari-drone-kebakaran-hutan-indonesia-720-ytshorts.savetube.me.mp4"
+          type="video/mp4">
+      </video>
+
+      <div class="absolute inset-0 bg-gradient-to-t from-bara via-arang/75 to-arang/50 z-10"></div>
+
+      <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">
+
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6 text-center md:text-left border-b border-white/20 pb-6">
+          <div class="space-y-3 max-w-2xl mx-auto md:mx-0">
+            <h2 class="font-sans text-4xl sm:text-6xl font-light leading-tight text-white tracking-tight">
+              Dokumentasi Lapangan <span class="italic font-normal text-green-200">& Ekologis</span>
+            </h2>
+            <p class="text-garis text-sm sm:text-base leading-relaxed font-light">
+              Bukti atas kesulitan dan perjuangan kita semua.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-center md:justify-end gap-3">
+            <button onclick="slideGaleri(-1)"
+              class="p-3 bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white hover:text-arang transition-yonobi text-white rounded-none shadow-lg"
+              title="Foto Sebelumnya">
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <button onclick="slideGaleri(1)"
+              class="p-3 bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white hover:text-arang transition-yonobi text-white rounded-none shadow-lg"
+              title="Foto Selanjutnya">
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div id="galeriSlider"
+            class="flex overflow-x-auto snap-x snap-mandatory gap-6 no-scrollbar scroll-smooth pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="pic/posko.png" alt="Posko"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Posko</span>
+                  <span class="text-xs text-garis mt-1 font-sans">[ foto posko ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <h4 class="font-sans text-xl font-normal">Posko Lapangan Tanggap Darurat</h4>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="pic/upaya.png" alt="Upaya pemadaman"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Upaya Pemadaman</span>
+                  <span class="text-xs text-garis mt-1 font-sans">[ foto upaya pemadaman ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <h4 class="font-sans text-xl font-normal">Upaya Pemadaman Kebakaran Hutan</h4>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex-none w-[85vw] sm:w-[48vw] lg:w-[32vw] snap-start group">
+              <div class="aspect-[4/3] relative overflow-hidden bg-arang/90 shadow-2xl">
+                <img src="pic/jepang.png" alt="Bantuan Jepang"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div
+                  class="hidden absolute inset-0 bg-arang/90 flex flex-col items-center justify-center text-center p-6 text-white">
+                  <i data-lucide="image" class="w-10 h-10 text-emerald-400 mb-2"></i>
+                  <span class="text-sm font-semibold">Foto Bantuan Jepang</span>
+                  <span class="text-xs text-garis mt-1 font-sans">[ foto bantuan jepang ]</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-arang via-transparent to-transparent opacity-90">
+                </div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <h4 class="font-sans text-xl font-normal">Bantuan Pemadaman dari Jepang</h4>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== MODUL 2: SIMULASI PETA EWS SATELIT & HAVERSINE DISTANCE ========== -->
+    <section id="peringatan-dini"
+      class="py-20 border-b border-garis max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 font-sans">
+
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-100 border border-red-300 text-red-800 text-[10px] font-sans uppercase font-bold tracking-widest">
+            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+            LIVE RADAR SATELIT
+          </span>
+          <span class="text-[10px] uppercase tracking-widest text-hutan font-bold">TERRA / AQUA MODIS & VIIRS</span>
+        </div>
+        <h2 class="font-sans text-3xl sm:text-5xl font-normal text-arang">
+          Simulasi Peta Peringatan Dini <span class="italic font-serif text-hutan">(Early Warning System)</span>
+        </h2>
+        <p class="text-gambut text-xs sm:text-sm max-w-3xl leading-relaxed font-light">
+          Integrasi pemantauan titik panas (hotspot) berbasis satelit interaktif berukuran besar dengan kalkulasi jarak
+          presisi (Haversine Formula) ke lokasi pengguna.
+        </p>
+      </div>
+
+      <!-- 1. PETA BESAR DI ATAS (SEAMLESS / TANPA BORDER DAN TANPA BACKGROUND EXTRA) -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-1 gap-2">
+          <div>
+            <h3 class="font-sans text-xl font-normal text-arang flex items-center gap-2">
+              <i data-lucide="radio" class="w-5 h-5 text-red-600 animate-pulse"></i>
+              <span>Peta Pemantauan Hotspot Interaktif (Leaflet.js)</span>
+            </h3>
+            <p class="text-[11px] text-gambut font-sans mt-0.5">Pantau lokasi titik panas satelit secara visual pada
+              peta area luas</p>
+          </div>
+          <span
+            class="text-[10px] font-sans text-emerald-800 bg-emerald-100 px-2.5 py-1 font-bold uppercase self-start sm:self-auto">
+            NASA FIRMS Feed Active
+          </span>
+        </div>
+
+        <!-- Container Peta Leaflet Berukuran Lebih Besar (Satu-satunya Kontainer Peta Tanpa Panel Background & Border) -->
+        <div id="ewsMap" class="w-full h-[500px] sm:h-[580px]"></div>
+      </div>
+
+      <!-- 2. MENU LAINNYA DI BAWAH PETA -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
+
+        <!-- Kolom Kiri: Selector Zona & Detail Telemetri Satelit -->
+        <div class="lg:col-span-6 bg-kertas border border-garis p-6 sm:p-8 space-y-6 shadow-2xs">
+          <div class="border-b border-garis pb-3">
+            <span class="text-[10px] font-sans uppercase tracking-widest text-hutan font-bold block">KONTROL ZONA &
+              TELEMETRI</span>
+            <h3 class="font-sans text-xl font-normal text-arang">Pengaturan Pemantauan & Telemetri Lahan</h3>
+          </div>
+
+          <!-- Selector Zona Rawan -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-gambut">Pilih Zona Pemantauan
+              Lahan</label>
+            <select id="ewsZoneSelect" onchange="updateEwsZoneDetails()"
+              class="w-full px-3.5 py-2.5 bg-abu border border-garis text-xs text-arang font-semibold focus:outline-none focus:border-hutan font-sans">
+              <option value="riau">Zona Riau — Kabupaten Bengkalis & Pelalawan (Gambut Dalam)</option>
+              <option value="kalteng" selected>Zona Kalimantan Tengah — Pulang Pisau & Palangkaraya (Gambut Tebal)
+              </option>
+              <option value="sumsel">Zona Sumatera Selatan — Ogan Komering Ilir (OKI)</option>
+              <option value="kalbar">Zona Kalimantan Barat — Kubu Raya</option>
+            </select>
+          </div>
+
+          <!-- Telemetry Satelit Card -->
+          <div id="ewsTelemetryCard" class="bg-abu border border-garis p-5 space-y-4 font-sans">
+            <div class="flex justify-between items-center border-b border-garis/60 pb-3">
+              <div>
+                <span id="ewsZoneTitle" class="font-sans text-lg font-bold text-arang block">Kalimantan Tengah (Pulang
+                  Pisau)</span>
+                <span id="ewsCoord" class="text-[10px] font-sans text-gambut block">Koordinat GPS: 2.7121° S, 114.2643°
+                  E</span>
+              </div>
+              <span id="ewsBadgeConfidence"
+                class="px-3 py-1 bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-sans font-bold uppercase">
+                Hotspot Sedang (65%)
+              </span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div class="bg-kertas p-3 border border-garis">
+                <span class="text-[10px] font-sans text-gambut uppercase block font-bold">Titik Panas</span>
+                <span id="ewsHotspotCount" class="font-sans text-2xl font-bold text-red-600 block">4 Hotspot</span>
+                <span class="text-[9px] text-gambut">Terdeteksi VIIRS</span>
+              </div>
+              <div class="bg-kertas p-3 border border-garis">
+                <span class="text-[10px] font-sans text-gambut uppercase block font-bold">Suhu Lahan</span>
+                <span id="ewsTemp" class="font-sans text-2xl font-bold text-arang block">42°C</span>
+                <span class="text-[9px] text-gambut">Radiasi Termal</span>
+              </div>
+              <div class="bg-kertas p-3 border border-garis">
+                <span class="text-[10px] font-sans text-gambut uppercase block font-bold">Kelembapan</span>
+                <span id="ewsHumidity" class="font-sans text-2xl font-bold text-hutan block">31%</span>
+                <span class="text-[9px] text-gambut">Status Kering</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button: Haversine Distance Test -->
+          <div class="p-4 bg-red-50/70 border border-red-200 space-y-3 font-sans">
+            <div class="flex items-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4 text-red-600"></i>
+              <span class="text-xs font-bold text-red-900 uppercase tracking-wider">Kalkulasi Jarak & Broadcast
+                Alert</span>
+            </div>
+            <p class="text-xs text-gambut leading-relaxed">
+              Tekan tombol di bawah untuk menghitung jarak real-time dari posisi GPS Anda ke titik panas terdekat dengan
+              **Rumus Haversine**.
+            </p>
+            <button onclick="triggerSimulasiHotspot()"
+              class="w-full py-3 bg-red-700 hover:bg-red-800 text-white text-xs font-bold uppercase tracking-widest transition-yonobi shadow-md flex items-center justify-center gap-2 border border-red-900">
+              <i data-lucide="bell-ring" class="w-4 h-4 text-yellow-300"></i>
+              <span>Kalkulasi Jarak & Picu Notifikasi Darurat</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Log Feed Peringatan Dini & Form Berlangganan -->
+        <div class="lg:col-span-6 space-y-6 font-sans">
+
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="flex justify-between items-center border-b border-garis pb-3">
+              <h3 class="font-sans text-lg font-normal text-arang flex items-center gap-2">
+                <i data-lucide="send" class="w-4 h-4 text-hutan"></i>
+                <span>Peringatan Dini Terkirim (Live Feed)</span>
+              </h3>
+              <span class="text-[10px] font-sans text-gambut uppercase font-bold">Multi-Channel</span>
+            </div>
+
+            <div id="ewsAlertFeed" class="space-y-3 max-h-64 overflow-y-auto pr-1">
+              <div
+                class="bg-red-50 border-l-4 border-red-600 border-t border-r border-b border-garis p-3.5 space-y-1.5 text-xs">
+                <div class="flex justify-between items-center text-[10px] font-sans font-bold text-red-900">
+                  <span class="flex items-center gap-1"><i data-lucide="smartphone" class="w-3 h-3"></i> BROADCAST BOT &
+                    SMS</span>
+                  <span>10 Menit Lalu</span>
+                </div>
+                <p class="font-semibold text-arang">[WARNING] Satelit VIIRS deteksi 4 hotspot di Pulang Pisau. Jarak:
+                  14.2 km dari Posko Utama.</p>
+                <div class="text-[10px] text-gambut font-sans">Diteruskan ke: 142 Relawan Posko & 1.250 Warga Radius 5
+                  KM</div>
+              </div>
+
+              <div
+                class="bg-amber-50 border-l-4 border-amber-600 border-t border-r border-b border-garis p-3.5 space-y-1.5 text-xs">
+                <div class="flex justify-between items-center text-[10px] font-sans font-bold text-amber-900">
+                  <span class="flex items-center gap-1"><i data-lucide="shield" class="w-3 h-3"></i> SIAGA PEMADAMAN
+                    DINI</span>
+                  <span>1 Jam Lalu</span>
+                </div>
+                <p class="font-semibold text-arang">Peringatan peningkatan suhu gambut di Bengkalis (Riau). Tim regu
+                  darat disiagakan.</p>
+                <div class="text-[10px] text-gambut font-sans">Diteruskan ke: Regu MPA (Masyarakat Peduli Api)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-kertas border border-garis p-6 space-y-4 shadow-2xs">
+            <div class="border-b border-garis pb-3">
+              <span class="text-[10px] font-sans uppercase tracking-widest text-hutan block font-bold">Fitur Relawan &
+                Warga</span>
+              <h4 class="font-sans text-xl font-normal text-arang">Daftar Notifikasi Dini Zona Saya</h4>
+            </div>
+
+            <form onsubmit="handleEwsSubscribe(event)" class="space-y-3 text-xs">
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-gambut mb-1">Nomor WhatsApp /
+                  Telegram</label>
+                <input type="text" id="ewsPhoneInput" required maxlength="20" placeholder="Contoh: 081234567890"
+                  class="w-full px-3 py-2 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+              </div>
+
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-gambut mb-1">Peran Pengguna</label>
+                <select id="ewsRoleInput"
+                  class="w-full px-3 py-2 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+                  <option value="Relawan Pemadam">Relawan / Regu Pemadam Lahan (MPA)</option>
+                  <option value="Warga Lokal">Warga Lokal Zona Rawan</option>
+                  <option value="Pemerhati Lingkungan">Pemerhati Lingkungan / Akademisi</option>
+                </select>
+              </div>
+
+              <button type="submit"
+                class="w-full py-2.5 bg-hutan hover:bg-bara text-white text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                <span>Aktifkan Peringatan Dini Satelit</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========== MODUL 3: INTEGRASI LAPORAN PARTISIPATIF (CROWDSOURCING, GEOTAGGING & VERIFIKASI MPA) ========== -->
+    <section id="partisipasi" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 font-sans">
+
+      <div class="space-y-3">
+        <span class="text-[10px] uppercase tracking-widest text-hutan font-bold block">MODUL CROWDSOURCING
+          REAL-TIME</span>
+        <h2 class="font-sans text-3xl sm:text-5xl font-normal text-arang">Ruang Partisipasi Rakyat</h2>
+        <p class="text-gambut text-xs sm:text-sm max-w-2xl leading-relaxed font-light">
+          Unggah aduan, titik api, atau indikasi kecurangan anggaran secara real-time. Setiap laporan warga wajib
+          melalui proses verifikasi lapangan oleh Tim MPA (Masyarakat Peduli Api) & Admin.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+        <!-- Papan Laporan Warga (Verified & Pending Status) -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="flex justify-between items-center border-b border-garis pb-3">
+            <h3 class="font-sans text-2xl font-normal text-arang">Papan Laporan Warga</h3>
+            <span id="aspirasiCount" class="text-[10px] font-sans uppercase tracking-widest text-hutan font-bold">
+              Memuat…
+            </span>
+          </div>
+
+          <div id="aspirasiFeed" class="space-y-4">
+            <p class="text-xs text-gambut bg-kertas border border-garis p-5">Memuat laporan…</p>
+          </div>
+        </div>
+
+        <!-- Form Crowdsourcing -->
+        <div id="lapor" class="lg:col-span-6 bg-kertas border border-garis p-8 shadow-2xs space-y-6">
+          <div class="border-b border-garis pb-4">
+            <span class="text-[10px] font-sans uppercase tracking-widest text-hutan block font-bold">CROWDSOURCING &
+              GEOTAGGING</span>
+            <h3 class="font-sans text-2xl font-normal text-arang">Unggah Laporan Titik Api / Anggaran</h3>
+          </div>
+
+          <form onsubmit="handleLaporSubmit(event)" class="space-y-4 text-xs">
+            <input type="hidden" id="latLaporan">
+            <input type="hidden" id="lngLaporan">
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Jenis laporan</label>
+              <select id="jenisLaporan"
+                class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+                <option value="Titik Api Baru">Titik Api Baru / Kebakaran Lahan</option>
+                <option value="Dugaan Korupsi Anggaran">Dugaan Penyelewengan Dana / Peralatan</option>
+                <option value="Kebutuhan Logistik">Permohonan Bantuan Logistik & Air</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Geotagging Lokasi GPS</label>
+              <div class="flex gap-2">
+                <input type="text" id="lokasiLaporan" required maxlength="200" oninput="kosongkanKoordinat()"
+                  placeholder="Koordinat GPS atau nama desa"
+                  class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans">
+                <button type="button" onclick="dapatkanGeotagGPS()"
+                  class="px-4 py-2.5 bg-hutan text-white text-[11px] font-bold uppercase tracking-wider hover:bg-bara transition-colors flex items-center gap-1.5 shrink-0">
+                  <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
+                  <span>Ambil GPS</span>
+                </button>
+              </div>
+              <span id="geoStatusText" class="text-[10px] text-gambut block mt-1">Klik 'Ambil GPS' untuk menempelkan
+                koordinat geotag otomatis.</span>
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Unggah Foto Bukti
+                Lapangan</label>
+              <input type="file" id="fotoLaporan" accept="image/*"
+                class="w-full px-3 py-2 bg-abu border border-garis text-arang text-xs focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-gambut mb-1.5">Deskripsi Kejadian
+                Real-Time</label>
+              <textarea id="ceritaLaporan" rows="4" required minlength="10" maxlength="2000"
+                placeholder="Jelaskan kondisi api, kronologi, atau dugaan kejanggalan anggaran secara mendetail..."
+                class="w-full px-3.5 py-2.5 bg-abu border border-garis text-arang focus:outline-none focus:border-hutan font-sans leading-relaxed"></textarea>
+            </div>
+
+            <button type="submit"
+              class="w-full py-3.5 bg-bara text-white text-xs font-bold uppercase tracking-widest hover:bg-hutan transition-colors shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Kirim Laporan (Masuk Antrean Verifikasi)</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-kertas border-t border-garis py-16 text-xs text-gambut font-sans">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+        <div class="space-y-4">
+          <span class="font-serif text-2xl font-normal tracking-[0.2em] text-hutan block uppercase">FIRE WATCH</span>
+          <p class="text-gambut text-xs leading-relaxed font-light">
+            Sistem pengawasan publik independen untuk transparansi anggaran pemadaman dan pemulihan Karhutla.
+          </p>
+          <div class="text-[11px] uppercase tracking-widest font-sans text-hutan font-bold">
+            FireWatch oleh @U-NyxC
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Menu Utama</span>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#keuangan" class="hover:text-hutan transition-colors">Keuangan & Visualisasi</a></li>
+            <li><a href="#lapangan" class="hover:text-hutan transition-colors">Dokumentasi Lapangan</a></li>
+            <li><a href="#peringatan-dini" class="hover:text-hutan transition-colors">Peringatan Dini Satelit</a></li>
+            <li><a href="#partisipasi" class="hover:text-hutan transition-colors">Laporan Crowdsourcing</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Sumber Data Resmi</span>
+          <p class="text-xs text-gambut leading-relaxed">
+            Laporan Keuangan Pemerintah Pusat (LKPP) 2025 Audited • Kementerian Keuangan RI • Satelit TERRA/AQUA MODIS &
+            VIIRS.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-hutan block">Aksi Publik</span>
+          <p class="text-xs text-gambut">Temukan kejanggalan atau titik api baru di lapangan?</p>
+          <a href="#lapor"
+            class="w-full py-2.5 bg-hutan text-white text-[10px] uppercase tracking-widest hover:bg-bara transition-colors font-bold text-center block">
+            Kirim Laporan Geotagged
+          </a>
+        </div>
+
+      </div>
+
+      <div
+        class="border-t border-garis pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-gambut">
+        <p>© 2026 FireWatch oleh @U-NyxC. All rights reserved.</p>
+        <div class="flex space-x-6">
+          <a href="#keuangan" class="hover:text-hutan">LKPP 2025 Audited</a>
+          <a href="#peringatan-dini" class="hover:text-hutan">EWS Hotspot</a>
+          <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="hover:text-hutan">Ke
+            Atas ↑</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Search Modal -->
+  <div id="searchModal"
+    class="fixed inset-0 z-50 bg-arang/70 backdrop-blur-sm hidden items-start justify-center pt-20 px-4 font-sans">
+    <div class="bg-kertas border border-garis w-full max-w-2xl p-6 shadow-2xl space-y-6">
+      <div class="flex justify-between items-center border-b border-garis pb-3">
+        <div class="flex items-center gap-3 w-full">
+          <i data-lucide="search" class="w-5 h-5 text-hutan"></i>
+          <input type="text" id="modalSearchInput" oninput="handleModalSearch(this.value)"
+            placeholder="Cari pos keuangan, visualisasi, atau peringatan satelit..."
+            class="w-full bg-transparent text-sm font-sans text-arang focus:outline-none">
+        </div>
+        <button onclick="closeSearchModal()" class="text-gambut hover:text-arang">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 max-h-80 overflow-y-auto">
+        <div class="text-[10px] uppercase tracking-widest text-hutan font-bold">Pencarian Cepat</div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button onclick="quickModalSearch('Visualisasi')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Visualisasi Anggaran</button>
+          <button onclick="quickModalSearch('Geotag')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Geotag Laporan</button>
+          <button onclick="quickModalSearch('Hotspot')"
+            class="px-3 py-1 bg-abu border border-garis hover:border-hutan">Satelit Hotspot EWS</button>
+        </div>
+
+        <div id="modalSearchResults" class="space-y-2 pt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast"
+    class="fixed bottom-6 right-6 z-50 bg-arang text-white px-5 py-3.5 shadow-2xl border border-hutan text-xs tracking-wider uppercase hidden items-center gap-3 font-sans">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Laporan terkirim.</span>
+  </div>
+
+  <!-- ================= LOGIKA JAVASCRIPT LENGKAP ================= -->
+  <script>
+    lucide.createIcons();
+
+    // Data cadangan jika server backend tidak bisa dihubungi (mis. halaman dibuka via file://)
+    let budgetData = {
+      ringkasan: {
+        pendapatan_triliun: "Rp 2.765,13 T",
+        belanja_triliun: "Rp 3.435,46 T",
+        silpa_triliun: "Rp 72,40 T"
+      },
+      sektor_penyerapan: [
+        { id: "pemadaman", kelompok: "pemadaman", nama: "1. Operasional Patroli & Helikopter Water Bombing", pagu_miliar: 1536, realisasi_miliar: 1420, realisasi_triliun: 1.42, persentase: 92.4, keterangan: "Pagu: Rp 1.536 M • Realisasi Darurat Karhutla", warna: "#0B3D2E" },
+        { id: "restorasi", kelompok: "restorasi", nama: "2. Pembasahan Gambut & Sekat Kanal Ekologis", pagu_miliar: 1088, realisasi_miliar: 850, realisasi_triliun: 0.85, persentase: 78.1, keterangan: "Pagu: Rp 1.088 M • Badan Restorasi Gambut & Mangrove", warna: "#047857" },
+        { id: "logistik", kelompok: "pemadaman", nama: "3. Peralatan Logistik MPA & Posko Desa Rawan", pagu_miliar: 732, realisasi_miliar: 620, realisasi_triliun: 0.62, persentase: 84.6, keterangan: "Pagu: Rp 732 M • Pengadaan Pompa Air & APD Relawan", warna: "#92400E" },
+        { id: "bansos", kelompok: "restorasi", nama: "4. Bansos Kesehatan & Kompensasi Asap Warga", pagu_miliar: 500, realisasi_miliar: 325, realisasi_triliun: 0.325, persentase: 65.0, keterangan: "Pagu: Rp 500 M • Pembagian Oksigen & Pelayanan ISPA", warna: "#381208" }
+      ]
+    };
+
+    let donutChartInstance = null;
+
+    // Async Fetch Data JSON untuk Dashboard Anggaran
+    async function loadBudgetData() {
+      try {
+        const response = await fetch('/api/anggaran');
+        if (response.ok) {
+          budgetData = await response.json();
+        }
+      } catch (err) {
+        console.log("Memuat data fallback anggaran (File protocol detected)");
+      }
+      renderBudgetDashboard();
+    }
+
+    function renderBudgetDashboard() {
+      document.getElementById('kpiPendapatan').innerText = budgetData.ringkasan.pendapatan_triliun;
+      document.getElementById('kpiBelanja').innerText = budgetData.ringkasan.belanja_triliun;
+      document.getElementById('kpiSilpa').innerText = budgetData.ringkasan.silpa_triliun;
+
+      const ctx = document.getElementById('budgetDonutChart').getContext('2d');
+      const labels = budgetData.sektor_penyerapan.map(s => s.nama.split('.')[1] || s.nama);
+      const dataValues = budgetData.sektor_penyerapan.map(s => s.realisasi_triliun);
+      const colors = budgetData.sektor_penyerapan.map(s => s.warna);
+
+      if (donutChartInstance) donutChartInstance.destroy();
+
+      donutChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: dataValues,
+            backgroundColor: colors,
+            borderColor: '#FAFAF7',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: 'Avenir Next', size: 10 },
+                color: '#232622',
+                boxWidth: 12
+              }
+            }
+          }
+        }
+      });
+
+      renderProgressBars(budgetData.sektor_penyerapan);
+      renderPosKas(budgetData.pos_kas);
+    }
+
+    // Semua teks dari server disisipkan lewat esc() supaya tidak bisa menyuntik HTML/skrip.
+    function esc(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function renderPosKas(pos) {
+      if (!pos) return; // data cadangan (file://) tidak punya pos_kas -> daftar di HTML dipakai
+      const buat = (daftar) => daftar.length ? daftar.map(p => `
+              <li class="py-3 flex justify-between items-center gap-4 hover:bg-abu px-2 transition-colors">
+                <div>
+                  <span class="font-semibold text-arang block">${esc(p.nama)}</span>
+                  <span class="text-[10px] text-gambut font-sans">${esc(p.sumber)}</span>
+                </div>
+                <span class="font-sans font-bold text-arang text-sm">${esc(p.nilai)}</span>
+              </li>`).join('') : '<li class="py-3 px-2 text-gambut">Belum ada data.</li>';
+      document.getElementById('listMasuk').innerHTML = buat(pos.masuk || []);
+      document.getElementById('listKeluar').innerHTML = buat(pos.keluar || []);
+    }
+
+    function renderProgressBars(sektorList) {
+      const container = document.getElementById('sectorProgressContainer');
+      container.innerHTML = `<h4 class="font-sans text-base font-semibold text-arang border-b border-garis pb-2">Detail Persentase Penyerapan Per Pos Kegiatan</h4>`;
+
+      sektorList.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "space-y-1.5 font-sans";
+        div.innerHTML = `
+          <div class="flex justify-between text-xs font-semibold">
+            <span class="text-arang">${esc(item.nama)}</span>
+            <span class="text-hutan">${Number(item.persentase)}% (Rp ${Number(item.realisasi_miliar)} M)</span>
+          </div>
+          <div class="w-full bg-garis h-3 rounded-full overflow-hidden">
+            <div class="h-full transition-all duration-700" style="width: ${Number(item.persentase)}%; background-color: ${esc(item.warna)};"></div>
+          </div>
+          <span class="text-[10px] text-gambut block">${esc(item.keterangan)}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function switchBudgetChart(type) {
+      document.getElementById('btnChartAll').className = "px-3 py-1.5 bg-abu text-arang hover:border-hutan border border-garis";
+      document.getElementById('btnChartPemadaman').className = "px-3 py-1.5 bg-abu text-arang hover:border-hutan border border-garis";
+      document.getElementById('btnChartRestorasi').className = "px-3 py-1.5 bg-abu text-arang hover:border-hutan border border-garis";
+
+      if (type === 'all') {
+        document.getElementById('btnChartAll').className = "px-3 py-1.5 bg-hutan text-white font-semibold";
+        renderProgressBars(budgetData.sektor_penyerapan);
+        donutChartInstance.data.datasets[0].data = budgetData.sektor_penyerapan.map(s => s.realisasi_triliun);
+      } else if (type === 'pemadaman') {
+        document.getElementById('btnChartPemadaman').className = "px-3 py-1.5 bg-hutan text-white font-semibold";
+        const filtered = budgetData.sektor_penyerapan.filter(s => s.kelompok === 'pemadaman');
+        renderProgressBars(filtered);
+        donutChartInstance.data.datasets[0].data = budgetData.sektor_penyerapan.map(s => s.kelompok === 'pemadaman' ? s.realisasi_triliun : 0);
+      } else if (type === 'restorasi') {
+        document.getElementById('btnChartRestorasi').className = "px-3 py-1.5 bg-hutan text-white font-semibold";
+        const filtered = budgetData.sektor_penyerapan.filter(s => s.kelompok === 'restorasi');
+        renderProgressBars(filtered);
+        donutChartInstance.data.datasets[0].data = budgetData.sektor_penyerapan.map(s => s.kelompok === 'restorasi' ? s.realisasi_triliun : 0);
+      }
+      donutChartInstance.update();
+    }
+
+    // ================= TAHAP 2: SIMULASI EWS (LEAFLET.JS & HAVERSINE FORMULA) =================
+    const EWS_ZONES = {
+      riau: {
+        title: "Sumatera — Riau (Bengkalis & Pelalawan)",
+        lat: 1.4851, lng: 102.1328,
+        coord: "Koordinat GPS: 1.4851° N, 102.1328° E",
+        confidence: "Sedang (68%)",
+        confidenceClass: "bg-amber-100 text-amber-900 border-amber-300",
+        hotspot: "3 Hotspot", temp: "39°C", humidity: "38%"
+      },
+      kalteng: {
+        title: "Kalimantan Tengah (Pulang Pisau & Palangkaraya)",
+        lat: -2.7121, lng: 114.2643,
+        coord: "Koordinat GPS: 2.7121° S, 114.2643° E",
+        confidence: "Sedang (65%)",
+        confidenceClass: "bg-amber-100 text-amber-900 border-amber-300",
+        hotspot: "4 Hotspot", temp: "42°C", humidity: "31%"
+      },
+      sumsel: {
+        title: "Sumatera Selatan (Ogan Komering Ilir)",
+        lat: -3.3934, lng: 104.8197,
+        coord: "Koordinat GPS: 3.3934° S, 104.8197° E",
+        confidence: "Tinggi (88%)",
+        confidenceClass: "bg-red-100 text-red-900 border-red-300",
+        hotspot: "9 Hotspot", temp: "46°C", humidity: "24%"
+      },
+      kalbar: {
+        title: "Kalimantan Barat (Kubu Raya)",
+        lat: -0.1332, lng: 109.3871,
+        coord: "Koordinat GPS: 0.1332° S, 109.3871° E",
+        confidence: "Rendah (42%)",
+        confidenceClass: "bg-emerald-100 text-emerald-900 border-emerald-300",
+        hotspot: "1 Hotspot", temp: "35°C", humidity: "52%"
+      }
+    };
+
+    let ewsMap = null;
+    let currentHotspotMarker = null;
+    let currentUserMarker = null;
+    let userCoords = { lat: -2.7210, lng: 114.2811 };
+
+    function initEwsMap() {
+      const initialZone = EWS_ZONES.kalteng;
+      ewsMap = L.map('ewsMap').setView([initialZone.lat, initialZone.lng], 9);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap FireWatch EWS',
+        maxZoom: 18
+      }).addTo(ewsMap);
+
+      // Hotspot Marker
+      currentHotspotMarker = L.circleMarker([initialZone.lat, initialZone.lng], {
+        color: '#dc2626',
+        fillColor: '#ef4444',
+        fillOpacity: 0.75,
+        radius: 14
+      }).addTo(ewsMap).bindPopup(`<b>${initialZone.title}</b><br>Titik Panas Satelit VIIRS (4 Hotspot)`).openPopup();
+
+      // User Position Marker
+      currentUserMarker = L.marker([userCoords.lat, userCoords.lng]).addTo(ewsMap)
+        .bindPopup(`<b>Lokasi Koordinat Anda</b>`);
+
+      setTimeout(() => {
+        if (ewsMap) ewsMap.invalidateSize();
+      }, 300);
+    }
+
+    function updateEwsZoneDetails() {
+      const selected = document.getElementById('ewsZoneSelect').value;
+      const data = EWS_ZONES[selected];
+      if (!data || !ewsMap) return;
+
+      document.getElementById('ewsZoneTitle').innerText = data.title;
+      document.getElementById('ewsCoord').innerText = data.coord;
+      document.getElementById('ewsHotspotCount').innerText = data.hotspot;
+      document.getElementById('ewsTemp').innerText = data.temp;
+      document.getElementById('ewsHumidity').innerText = data.humidity;
+
+      const badge = document.getElementById('ewsBadgeConfidence');
+      badge.innerText = `Hotspot ${data.confidence}`;
+      badge.className = `px-3 py-1 border text-[10px] font-sans font-bold uppercase ${data.confidenceClass}`;
+
+      ewsMap.flyTo([data.lat, data.lng], 9);
+      if (currentHotspotMarker) {
+        currentHotspotMarker.setLatLng([data.lat, data.lng]);
+        currentHotspotMarker.getPopup().setContent(`<b>${data.title}</b><br>Titik Panas Satelit: ${data.hotspot}`);
+      }
+    }
+
+    // Kalkulasi Jarak Presisi Haversine
+    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return (R * c).toFixed(1);
+    }
+
+    function triggerSimulasiHotspot() {
+      const selected = document.getElementById('ewsZoneSelect').value;
+      const zoneData = EWS_ZONES[selected] || EWS_ZONES.kalteng;
+
+      const distance = calculateHaversineDistance(userCoords.lat, userCoords.lng, zoneData.lat, zoneData.lng);
+
+      const alertFeed = document.getElementById('ewsAlertFeed');
+      const item = document.createElement('div');
+      item.className = "bg-red-100 border-l-4 border-red-700 border-t border-r border-b border-red-300 p-3.5 space-y-1.5 text-xs animate-pulse font-sans";
+      item.innerHTML = `
+        <div class="flex justify-between items-center text-[10px] font-sans font-bold text-red-950">
+          <span class="flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-red-600"></i> HAVERSINE EWS ALERT</span>
+          <span>Baru Saja</span>
+        </div>
+        <p class="font-bold text-red-950">[DETEKSI DARURAT] Satelit VIIRS melacak titik panas di ${zoneData.title}!</p>
+        <div class="text-[10px] text-red-800 font-sans font-semibold">Jarak Presisi: ${distance} km dari lokasi Anda (High Confidence 94%). Broadcast SMS/WA Terkirim!</div>
+      `;
+      alertFeed.prepend(item);
+      lucide.createIcons();
+
+      showToast(`Hotspot terdeteksi berjarak ${distance} km dari lokasi Anda!`);
+    }
+
+    async function handleEwsSubscribe(e) {
+      e.preventDefault();
+      const form = e.target;
+      const kontak = document.getElementById('ewsPhoneInput').value;
+      const peran = document.getElementById('ewsRoleInput').value;
+      const zona = document.getElementById('ewsZoneSelect').value;
+
+      try {
+        const res = await fetch('/api/langganan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ kontak, peran, zona })
+        });
+        const hasil = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(hasil.error || 'Pendaftaran gagal. Coba lagi.');
+        showToast(`Berhasil! Nomor ${kontak} (${peran}) terdaftar pada EWS Satelit FireWatch.`);
+        form.reset();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    // ================= TAHAP 3: LAPORAN WARGA (TERHUBUNG KE BACKEND) =================
+    // Verifikasi laporan HANYA bisa dilakukan admin lewat halaman /admin.
+    // Server menolak permintaan verifikasi dari siapa pun yang belum login sebagai admin.
+
+    function waktuRelatif(iso) {
+      const detik = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+      if (detik < 60) return 'Baru saja';
+      const menit = Math.floor(detik / 60);
+      if (menit < 60) return `${menit} Menit Lalu`;
+      const jam = Math.floor(menit / 60);
+      if (jam < 24) return `${jam} Jam Lalu`;
+      return `${Math.floor(jam / 24)} Hari Lalu`;
+    }
+
+    function formatKoordinat(lat, lng) {
+      return `${Math.abs(lat).toFixed(4)}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lng).toFixed(4)}° ${lng < 0 ? 'W' : 'E'}`;
+    }
+
+    function kartuLaporanHtml(r) {
+      const verified = r.status === 'terverifikasi';
+      const badge = verified
+        ? `<span class="status-badge px-2.5 py-1 bg-emerald-100 text-emerald-900 border border-emerald-300 uppercase flex items-center gap-1">
+             <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-700"></i><span>✓ TERVERIFIKASI TIM MPA</span></span>`
+        : `<span class="status-badge px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 uppercase flex items-center gap-1">
+             <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-700"></i><span>⏳ MENUNGGU VERIFIKASI TIM MPA</span></span>`;
+      let lampiran = 'Tanpa Lampiran Foto';
+      if (r.foto_url) {
+        lampiran = `<a href="${esc(r.foto_url)}" target="_blank" rel="noopener" class="underline hover:text-arang">Lihat foto lampiran</a>`;
+      } else if (r.ada_foto) {
+        lampiran = 'Lampiran foto ada (ditinjau admin)';
+      }
+      return `
+        <div class="bg-kertas border-l-4 ${verified ? 'border-hutan' : 'border-amber-500'} border-t border-r border-b border-garis p-5 shadow-2xs space-y-3 font-sans">
+          <div class="flex flex-wrap justify-between items-center text-[10px] font-sans font-bold gap-2">
+            ${badge}
+            <span class="text-gambut">${esc(waktuRelatif(r.dibuat_pada))}</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-hutan block">${esc(r.jenis)}</span>
+            <p class="font-sans text-sm text-arang leading-relaxed whitespace-pre-line">“${esc(r.deskripsi)}”</p>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-gambut pt-2 border-t border-garis/60">
+            <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-hutan"></i> ${esc(r.lokasi)}</span>
+            <span class="text-[10px] text-hutan font-semibold">${lampiran}</span>
+          </div>
+        </div>`;
+    }
+
+    async function loadLaporan() {
+      const feed = document.getElementById('aspirasiFeed');
+      try {
+        const res = await fetch('/api/laporan');
+        if (!res.ok) throw new Error('gagal');
+        const data = await res.json();
+        feed.innerHTML = data.laporan.length
+          ? data.laporan.map(kartuLaporanHtml).join('')
+          : '<p class="text-xs text-gambut bg-kertas border border-garis p-5">Belum ada laporan. Jadilah yang pertama melapor.</p>';
+        document.getElementById('aspirasiCount').innerText =
+          `${data.jumlah.terverifikasi} Terverifikasi • ${data.jumlah.menunggu} Menunggu Verifikasi`;
+        lucide.createIcons();
+      } catch (err) {
+        feed.innerHTML = '<p class="text-xs text-red-800 bg-red-50 border border-red-200 p-5">Laporan belum bisa dimuat. Pastikan server backend sedang berjalan.</p>';
+      }
+    }
+
+    function kosongkanKoordinat() {
+      document.getElementById('latLaporan').value = '';
+      document.getElementById('lngLaporan').value = '';
+    }
+
+    function dapatkanGeotagGPS() {
+      const inputLokasi = document.getElementById('lokasiLaporan');
+      const statusText = document.getElementById('geoStatusText');
+
+      if (!navigator.geolocation) {
+        statusText.innerText = "Perangkat ini tidak mendukung GPS. Ketik nama desa atau koordinat secara manual.";
+        return;
+      }
+      statusText.innerText = "Mengambil data GPS presisi...";
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          userCoords = { lat: lat, lng: lng };
+          inputLokasi.value = `Geo: ${formatKoordinat(lat, lng)}`;
+          document.getElementById('latLaporan').value = lat.toFixed(6);
+          document.getElementById('lngLaporan').value = lng.toFixed(6);
+          statusText.innerText = "✓ Geotag GPS berhasil ditempelkan secara akurat!";
+          statusText.className = "text-[10px] text-emerald-700 font-bold block mt-1 font-sans";
+
+          if (currentUserMarker && ewsMap) {
+            currentUserMarker.setLatLng([lat, lng]);
+            ewsMap.setView([lat, lng], 10);
+          }
+        },
+        () => {
+          // Tidak ada lokasi palsu: laporan hanya boleh berisi lokasi yang benar.
+          statusText.innerText = "GPS tidak bisa diakses (izin ditolak atau sinyal lemah). Ketik nama desa atau koordinat secara manual.";
+          statusText.className = "text-[10px] text-red-700 font-bold block mt-1 font-sans";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    async function handleLaporSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const tombol = form.querySelector('button[type="submit"]');
+      const foto = document.getElementById('fotoLaporan').files[0];
+
+      if (foto && foto.size > 5 * 1024 * 1024) {
+        showToast('Ukuran foto maksimal 5 MB.');
+        return;
+      }
+
+      const data = new FormData();
+      data.append('jenis', document.getElementById('jenisLaporan').value);
+      data.append('lokasi', document.getElementById('lokasiLaporan').value);
+      data.append('deskripsi', document.getElementById('ceritaLaporan').value);
+      data.append('lat', document.getElementById('latLaporan').value);
+      data.append('lng', document.getElementById('lngLaporan').value);
+      if (foto) data.append('foto', foto);
+
+      tombol.disabled = true;
+      try {
+        const res = await fetch('/api/laporan', { method: 'POST', body: data });
+        const hasil = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(hasil.error || 'Laporan gagal dikirim. Coba lagi.');
+        form.reset();
+        kosongkanKoordinat();
+        await loadLaporan();
+        showToast('Laporan berhasil dikirim! Status saat ini: Menunggu Verifikasi Admin/MPA.');
+      } catch (err) {
+        showToast(err.message);
+      } finally {
+        tombol.disabled = false;
+      }
+    }
+
+    // Helper Utility Functions
+    function slideGaleri(direction) {
+      const slider = document.getElementById('galeriSlider');
+      const scrollAmount = slider.clientWidth * 0.75;
+      slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    function filterKas(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('#listMasuk li').forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+      });
+      document.querySelectorAll('#listKeluar li').forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function openSearchModal() {
+      document.getElementById('searchModal').classList.remove('hidden');
+      document.getElementById('searchModal').classList.add('flex');
+      document.getElementById('modalSearchInput').focus();
+    }
+
+    function closeSearchModal() {
+      document.getElementById('searchModal').classList.add('hidden');
+      document.getElementById('searchModal').classList.remove('flex');
+    }
+
+    function handleModalSearch(val) {
+      const res = document.getElementById('modalSearchResults');
+      res.innerHTML = '';
+      if (!val.trim()) return;
+
+      const q = val.toLowerCase();
+      const SEARCH_ITEMS = [
+        { cat: 'Keuangan', title: 'Pendapatan Perpajakan', detail: 'LKPP 2025 Audited: Rp 2.218,17 T' },
+        { cat: 'Keuangan', title: 'Visualisasi Penyerapan Pemadaman', detail: 'Realisasi Rp 1.420 M (92,4%)' },
+        { cat: 'Crowdsourcing', title: 'Geotagging Laporan Warga', detail: 'Verifikasi Lokasi & MPA' },
+        { cat: 'EWS Satelit', title: 'Pemantauan Hotspot Satelit', detail: 'Telemetry MODIS & VIIRS' }
+      ];
+
+      const matches = SEARCH_ITEMS.filter(i => i.title.toLowerCase().includes(q) || i.detail.toLowerCase().includes(q));
+      if (matches.length === 0) {
+        res.innerHTML = `<p class="text-xs text-gambut py-2">Tidak ada data ditemukan.</p>`;
+        return;
+      }
+
+      matches.forEach(m => {
+        const div = document.createElement('div');
+        div.className = "p-3 bg-abu border border-garis flex justify-between items-center hover:border-hutan cursor-pointer font-sans";
+        div.onclick = () => {
+          closeSearchModal();
+          location.hash = m.cat === 'Keuangan' ? '#keuangan' : (m.cat === 'EWS Satelit' ? '#peringatan-dini' : '#partisipasi');
+        };
+        div.innerHTML = `
+          <div>
+            <span class="text-[10px] font-sans text-hutan font-bold uppercase block">${m.cat}</span>
+            <span class="font-sans text-sm text-arang font-semibold">${m.title}</span>
+          </div>
+          <span class="font-sans text-xs text-gambut">${m.detail}</span>
+        `;
+        res.appendChild(div);
+      });
+    }
+
+    function quickModalSearch(term) {
+      document.getElementById('modalSearchInput').value = term;
+      handleModalSearch(term);
+    }
+
+    function toggleMobileNav() {
+      document.getElementById('mobileNav').classList.toggle('hidden');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 4000);
+    }
+
+    // Inisialisasi Modul
+    window.addEventListener('DOMContentLoaded', () => {
+      loadBudgetData();
+      loadLaporan();
+      initEwsMap();
+    });
+  </script>
+</body>
+
+</html>

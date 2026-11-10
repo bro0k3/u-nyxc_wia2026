@@ -525,9 +525,9 @@
         </p>
       </div>
 
-      <!-- 1. PETA BESAR DI ATAS (FULL WIDTH) -->
-      <div class="bg-kertas border border-garis p-4 sm:p-6 space-y-4 shadow-2xs">
-        <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-garis pb-3 gap-2">
+      <!-- 1. PETA BESAR DI ATAS (SEAMLESS / TANPA BORDER DAN TANPA BACKGROUND EXTRA) -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center pb-1 gap-2">
           <div>
             <h3 class="font-sans text-xl font-normal text-arang flex items-center gap-2">
               <i data-lucide="radio" class="w-5 h-5 text-red-600 animate-pulse"></i>
@@ -537,13 +537,13 @@
               peta area luas</p>
           </div>
           <span
-            class="text-[10px] font-sans text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-1 font-bold uppercase self-start sm:self-auto">
+            class="text-[10px] font-sans text-emerald-800 bg-emerald-100 px-2.5 py-1 font-bold uppercase self-start sm:self-auto">
             NASA FIRMS Feed Active
           </span>
         </div>
 
-        <!-- Container Peta Leaflet Berukuran Lebih Besar -->
-        <div id="ewsMap" class="w-full h-[500px] sm:h-[580px] border border-garis shadow-inner"></div>
+        <!-- Container Peta Leaflet Berukuran Lebih Besar (Satu-satunya Kontainer Peta Tanpa Panel Background & Border) -->
+        <div id="ewsMap" class="w-full h-[500px] sm:h-[580px]"></div>
       </div>
 
       <!-- 2. MENU LAINNYA DI BAWAH PETA -->
