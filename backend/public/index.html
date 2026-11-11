@@ -778,7 +778,11 @@
     function initEwsMap() {
       const z = EWS_ZONES.kalteng;
       ewsMap = L.map('ewsMap', { scrollWheelZoom: false }).setView([z.lat, z.lng], 9);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 18 }).addTo(ewsMap);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      }).addTo(ewsMap);
       currentHotspotMarker = L.circleMarker([z.lat, z.lng], { color: '#FF4655', fillColor: '#FF4655', fillOpacity: .75, radius: 14 })
         .addTo(ewsMap).bindPopup(`<b>${z.title}</b><br>${z.hotspot} hotspot (VIIRS)`);
       currentUserMarker = L.marker([userCoords.lat, userCoords.lng]).addTo(ewsMap).bindPopup('<b>Lokasi kamu</b>');

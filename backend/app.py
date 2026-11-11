@@ -221,7 +221,9 @@ def create_app(data_dir=None):
     def header_keamanan(resp):
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
         resp.headers.setdefault("X-Frame-Options", "DENY")
-        resp.headers.setdefault("Referrer-Policy", "same-origin")
+        # Jangan "same-origin"/"no-referrer": server tile OpenStreetMap memblokir (403)
+        # permintaan yang tidak membawa Referer.
+        resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         if request.path.startswith("/api/"):
             resp.headers["Cache-Control"] = "no-store"
         return resp

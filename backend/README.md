@@ -28,16 +28,13 @@ data/             dibuat otomatis: firewatch.db, uploads/ (foto), secret_key
    pip install -r requirements.txt
    ```
 
-2. Salin folder `pic/` dan `vid/` ke dalam folder `public/`
-   (supaya logo, foto, dan video tetap muncul).
-
-3. Buat akun admin pertama (kata sandi minimal 10 karakter):
+2. Buat akun admin pertama (kata sandi minimal 10 karakter):
 
    ```
    python manage.py buat-admin namaadmin
    ```
 
-4. Jalankan:
+3. Jalankan:
 
    ```
    python app.py
@@ -52,12 +49,12 @@ data/             dibuat otomatis: firewatch.db, uploads/ (foto), secret_key
 
 | Aksi | Publik | Admin |
 |---|---|---|
-| Melihat anggaran, Buku Kas, papan laporan | ✅ | ✅ |
-| Mengirim laporan, mendaftar notifikasi | ✅ | ✅ |
-| **Verifikasi / tolak / hapus laporan** | ❌ | ✅ |
-| Mengubah data keuangan | ❌ | ✅ |
-| Melihat nomor HP pendaftar notifikasi | ❌ | ✅ |
-| Melihat foto laporan yang belum diverifikasi | ❌ | ✅ |
+| Melihat anggaran, Buku Kas, papan laporan | bisa | bisa |
+| Mengirim laporan, mendaftar notifikasi | bisa | bisa |
+| **Verifikasi / tolak / hapus laporan** | tidak | bisa |
+| Mengubah data keuangan | tidak | bisa |
+| Melihat nomor HP pendaftar notifikasi | tidak | bisa |
+| Melihat foto laporan yang belum diverifikasi | tidak | bisa |
 
 Aturan ini dicek **di server** (dekorator `@admin_required` di `app.py`), bukan hanya
 dengan menyembunyikan tombol. Orang yang memanggil API langsung tetap mendapat `401`.
