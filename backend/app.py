@@ -150,6 +150,18 @@ def create_app(data_dir=None):
 
     limiter = PembatasLaju()
     app.limiter = limiter
+
+    # Di hosting yang memakai load balancer (mis. PythonAnywhere) request.remote_addr berisi
+    # alamat internal load balancer, bukan alamat pengunjung. Set env FIREWATCH_IP_HEADER
+    # (mis. X-Real-IP) HANYA kalau header itu diisi oleh proxy milik hosting yang tepercaya.
+    header_ip = os.environ.get("FIREWATCH_IP_HEADER", "").strip()
+
+    def ip_klien():
+        if header_ip:
+            nilai = request.headers.get(header_ip, "").split(",")[0].strip()
+            if nilai:
+                return nilai
+        return request.remote_addr
     # Hash palsu: supaya waktu login sama lamanya baik username ada maupun tidak.
     hash_palsu = generate_password_hash(secrets.token_hex(8))
 
@@ -301,7 +313,7 @@ def create_app(data_dir=None):
 
     @app.post("/api/laporan")
     def kirim_laporan():
-        kunci = f"laporan:{request.remote_addr}"
+        kunci = f"laporan:{ip_klien()}"
         if limiter.penuh(kunci, 5, 600):
             return jsonify(error="Terlalu banyak laporan dari perangkat ini. Coba lagi beberapa menit lagi."), 429
         limiter.catat(kunci)
@@ -331,7 +343,7 @@ def create_app(data_dir=None):
 
     @app.post("/api/langganan")
     def daftar_langganan():
-        kunci = f"langganan:{request.remote_addr}"
+        kunci = f"langganan:{ip_klien()}"
         if limiter.penuh(kunci, 10, 600):
             return jsonify(error="Terlalu banyak percobaan. Coba lagi beberapa menit lagi."), 429
         limiter.catat(kunci)
@@ -382,7 +394,7 @@ def create_app(data_dir=None):
     @app.post("/api/admin/login")
     def admin_login():
         periksa_header_csrf()
-        kunci = f"login:{request.remote_addr}"
+        kunci = f"login:{ip_klien()}"
         if limiter.penuh(kunci, 5, 900):
             return jsonify(error="Terlalu banyak percobaan login. Coba lagi 15 menit lagi."), 429
 
